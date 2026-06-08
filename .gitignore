@@ -1,0 +1,6 @@
+# Ignore everything
+*
+
+# Except HTML files and .gitignore
+!*.html
+!.gitignore

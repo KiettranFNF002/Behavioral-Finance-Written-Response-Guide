@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endless Hardcore Practice - Behavioral Finance (UEH)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
+            --panel-bg: rgba(30, 41, 59, 0.45);
+            --border-glow: rgba(99, 102, 241, 0.15);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --error: #ef4444;
+            --error-glow: rgba(239, 68, 68, 0.2);
+            --border: rgba(255, 255, 255, 0.08);
+            --panel-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5), 0 8px 10px -6px rgb(0 0 0 / 0.5);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 32px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 13px;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+        }
+
+        .setting-input-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 10px;
+            padding-left: 16px;
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+        
+        .setting-input-group span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .number-input {
+            width: 70px;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            padding: 6px 8px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .number-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+        
+        /* Checkbox-style and selected styling for multi-select questions */
+        .choice-button.selected {
+            background: rgba(99, 102, 241, 0.1) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+        }
+        
+        .choice-button.selected .choice-letter {
+            background: var(--accent) !important;
+            color: #ffffff !important;
+            border-color: var(--accent) !important;
+        }
+
+        .choice-checkbox {
+            font-weight: 800;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .choice-button.selected .choice-checkbox {
+            background: var(--accent) !important;
+            color: #ffffff !important;
+            border-color: var(--accent) !important;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, #ffffff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .streak-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #f59e0b;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        .app-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 24px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stack {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--panel-shadow);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+        }
+
+        .question-card {
+            border-color: rgba(99, 102, 241, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), var(--panel-shadow);
+        }
+
+        .badge-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 6px;
+            color: var(--text-secondary);
+        }
+
+        .badge.source {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+        }
+
+        .timer-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            height: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(to right, #f43f5e, #ec4899);
+            width: 100%;
+            box-shadow: 0 0 8px rgba(244, 63, 94, 0.5);
+            transition: width 0.1s linear;
+        }
+
+        .question-prompt {
+            font-size: 17px;
+            font-weight: 500;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            white-space: pre-wrap;
+        }
+
+        .choice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .choice-button {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .choice-button:hover:not(.disabled) {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(4px);
+        }
+
+        .choice-button:focus {
+            outline: none;
+        }
+
+        .choice-letter {
+            font-weight: 800;
+            color: var(--accent);
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 6px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .choice-button:hover:not(.disabled) .choice-letter {
+            background: var(--accent);
+            color: #ffffff;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* Selected State */
+        .choice-button.selected {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.08);
+        }
+
+        /* Correct state */
+        .choice-button.correct {
+            border-color: var(--success) !important;
+            background: rgba(16, 185, 129, 0.08) !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+        }
+
+        .choice-button.correct .choice-letter {
+            background: var(--success) !important;
+            color: #ffffff !important;
+            border-color: var(--success) !important;
+            box-shadow: 0 0 10px var(--success-glow);
+        }
+
+        /* Incorrect state */
+        .choice-button.incorrect {
+            border-color: var(--error) !important;
+            background: rgba(239, 68, 68, 0.08) !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+        }
+
+        .choice-button.incorrect .choice-letter {
+            background: var(--error) !important;
+            color: #ffffff !important;
+            border-color: var(--error) !important;
+            box-shadow: 0 0 10px var(--error-glow);
+        }
+
+        .choice-button.disabled {
+            cursor: not-allowed;
+        }
+
+        .feedback-panel {
+            display: none;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback-banner {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .feedback-banner.correct {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #a7f3d0;
+        }
+
+        .feedback-banner.incorrect {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fecaca;
+        }
+
+        .explanation-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .explanation-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border: none;
+            border-radius: 12px;
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 14px 28px;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Sidebar layouts */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .stat-card .value {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 6px;
+            height: 6px;
+            overflow: hidden;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .progress-bar {
+            background: linear-gradient(to right, #6366f1, #a5b4fc);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+        }
+
+        .sidebar-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-section-title::after {
+            content: '';
+            flex-grow: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        select {
+            background: #0f172a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            padding: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .toggle-row span {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Switch styling */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.08);
+            transition: .3s;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .shortcut-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        kbd {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 6px;
+            color: var(--text-primary);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.5);
+        }
+
+        .reset-link {
+            color: var(--error);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            display: block;
+            margin-top: 16px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .reset-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-container">
+            <div class="brand-logo">BF</div>
+            <h1>BEHAVIORAL FINANCE - HARDCORE PRACTICE</h1>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="study_guide_explorer.html" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc; text-decoration: none; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px;" onmouseover="this.style.background='var(--accent)'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(99, 102, 241, 0.15)'; this.style.color='#a5b4fc';">
+                📝 Essay Explorer
+            </a>
+            <div class="streak-badge" id="streak-container">
+                🔥 <span id="current-streak">0</span> question streak
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Main Quiz Column -->
+        <div class="stack">
+            <section class="panel question-card stack" id="active-card">
+                <div class="badge-row">
+                    <span class="badge source" id="q-source">SOURCE</span>
+                    <span class="badge" id="q-index">QUESTION 1</span>
+                </div>
+
+                <!-- Glowing Timer Progress Bar -->
+                <div class="timer-container" id="timer-container">
+                    <div class="timer-bar" id="timer-bar"></div>
+                </div>
+                
+                <div class="question-prompt" id="q-prompt">
+                    Loading question...
+                </div>
+
+                <div class="choice-list" id="choices-container">
+                    <!-- Choices will be rendered here dynamically -->
+                </div>
+
+                <div class="feedback-panel" id="feedback-container">
+                    <div class="feedback-banner" id="feedback-banner">
+                        <span id="feedback-icon"></span>
+                        <span id="feedback-text">Correct.</span>
+                    </div>
+                    <div id="explanation-container">
+                        <div class="explanation-title">Explanation</div>
+                        <div class="explanation-text" id="explanation-text"></div>
+                    </div>
+                </div>
+
+                <div class="control-row">
+                    <button class="button" id="next-button" style="margin-left: auto;">
+                        Next Question →
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Sidebar Column -->
+        <div class="stack">
+            <!-- Stats Panel -->
+            <section class="panel stack">
+                <div class="sidebar-section-title">Session Stats</div>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="label">Total Done</div>
+                        <div class="value" id="stats-total">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Correct</div>
+                        <div class="value" id="stats-correct">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Accuracy</div>
+                        <div class="value" id="stats-accuracy">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Max Streak</div>
+                        <div class="value" id="stats-max-streak">0</div>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </section>
+
+            <!-- Filters Panel -->
+            <section class="panel stack">
+                <div class="sidebar-section-title">Practice Scope</div>
+                
+                <div class="field">
+                    <label for="filter-source">Content Source</label>
+                    <select id="filter-source">
+                        <option value="ALL">All Sources</option>
+                        <!-- Sources will be dynamically populated -->
+                    </select>
+                </div>
+
+                <div class="toggle-row">
+                    <span>Blitz Mode Timer</span>
+                    <label class="switch">
+                        <input type="checkbox" id="timer-mode-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-input-group" id="timer-duration-group">
+                    <span>Timer Limit (seconds)</span>
+                    <input type="number" class="number-input" id="timer-duration-input" min="3" max="120" step="1" value="15">
+                </div>
+
+                <div class="toggle-row">
+                    <span>Auto-advance next question</span>
+                    <label class="switch">
+                        <input type="checkbox" id="auto-advance-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-input-group" id="auto-advance-delay-group">
+                    <span>Advance Delay (seconds)</span>
+                    <input type="number" class="number-input" id="auto-advance-delay-input" min="0.5" max="10" step="0.5" value="1.5">
+                </div>
+                <div class="toggle-row" style="margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px;">
+                    <span>Review Mistakes Only</span>
+                    <label class="switch">
+                        <input type="checkbox" id="mistakes-mode-toggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-input-group" id="mistakes-count-group" style="display: none; justify-content: space-between; align-items: center; gap: 8px;">
+                    <span id="mistakes-count-label" style="font-size: 12px; color: var(--text-secondary);">0 incorrect questions saved</span>
+                    <button type="button" id="clear-mistakes-button" style="padding: 4px 8px; font-size: 11px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 4px; cursor: pointer; transition: all 0.2s ease;">Clear</button>
+                </div>
+
+                <a class="reset-link" onclick="resetStats()">Reset Cumulative Statistics</a>
+            </section>
+
+            <!-- Keyboard Shortcuts Panel -->
+            <section class="panel stack">
+                <div class="sidebar-section-title">Keyboard Controls</div>
+                <div class="shortcut-list">
+                    <div class="shortcut-item">
+                        <span>Select Option A</span>
+                        <kbd>A</kbd> or <kbd>1</kbd>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Select Option B</span>
+                        <kbd>B</kbd> or <kbd>2</kbd>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Select Option C</span>
+                        <kbd>C</kbd> or <kbd>3</kbd>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Select Option D</span>
+                        <kbd>D</kbd> or <kbd>4</kbd>
+                    </div>
+                    <div class="shortcut-item">
+                        <span>Next Question</span>
+                        <kbd>Space</kbd> or <kbd>Enter</kbd>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Directly embedded JSON database of unique valid questions
+        const questionsPool = [{"source": "Multiple Choice (Part 1)", "number": "1", "prompt": "A person has the following value function according to prospect theory: * $v(w) = w^{0.5}$ if $w \\ge 0$ * $v(w) = -2(-w)^{0.5}$ if $w < 0$ Which of the following statements is true about this person?", "choices": {"A": "This person is afraid of losses", "B": "This person is risk averse", "C": "This person is risk neutral", "D": "This person seeks risk"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "2", "prompt": "Which of the following is a normative model of how decisions are made in the presence of underlying probability information?", "choices": {"A": "Comparative reasoning", "B": "This person is risk and loss averse Prospect theory", "C": "Bayes Theorem", "D": "Discount utility model"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "3", "prompt": "For prospect $P_1(0.5, 100, 200)$. Use the utility function $U = \\ln W$. The expected utility value of the prospect is", "choices": {"A": "4.95", "B": "4.79", "C": "4.59"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "4", "prompt": "The consumer's optimal decision is", "choices": {"A": "Combining goods gives the highest total utility", "B": "Combine the goods with the highest marginal utility", "C": "Combining goods yields the highest profit", "D": "Optimal combination of goods according to budget constraints"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "5", "prompt": "One has a utility function of the form $U = -e^{-2w}$ (knowing $e \\approx 2.718$). This person is:", "choices": {"A": "Risk Seekers", "B": "People who are indifferent to risks", "C": "People who are afraid of risks"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "7", "prompt": "Decide between two prospects: ● C(0.00002, $500,000, $0) ● D(0.00001, $1000,000, $0) Which option is preferred according to prospect theory?", "choices": {"A": "Prospect D results from risk seeking in the high probability zone", "B": "Prospect C is due to risk aversion in the high probability zone", "C": "Outlook C due to risk aversion in low probability zone", "D": "Prospect D is due to the search for risk in the low probability region", "E": "Neither prospect is preferred due to lack of loss aversion"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "8", "prompt": "If someone said “You will definitely get into a top business school; you did top of our class!”, what mistake did this person make?", "choices": {"A": "Ignore sample size", "B": "Ignore predictive value", "C": "Ignore the base probability and ignore the predicted value", "D": "Ignore the base probability"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "9", "prompt": "Decide between two prospects: ● A(0.80, $50, $0) ● B(0.40, $100, $0) Which option is preferred according to prospect theory?", "choices": {"A": "Prospect A is due to risk aversion in the profit domain", "B": "Prospect B is due to risk seeking in the profit domain", "C": "Prospect B results from risk seeking in the loss domain", "D": "Prospect A is due to risk aversion in the loss domain", "E": "Neither prospect is preferred due to lack of loss aversion"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "11", "prompt": "Risk-indifferent people are characterized by their utility function", "choices": {"A": "marginal utility increases", "B": "marginal utility is zero", "C": "marginal utility decreases", "D": "constant marginal utility", "E": "quadratic marginal utility"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "12", "prompt": "Imagine you are a very shy person. You meet someone new and evaluate That person is bold and sociable. A friend of yours who is inclined tends to speak boldly and very loudly, judging that new friend to be a bit quiet and discreet. These reviews are examples of:", "choices": {"A": "Experience typical situations", "B": "There are no deviations here", "C": "Anchor decisions and adjustments", "D": "Unreasonable calculation"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "13", "prompt": "Statman (1997) argues that investors prefer stocks that pay cash dividends high because they will feel more comfortable spending, but will not feel comfortable when having to sell few stocks to have money to spend even though both options are assumed to yield a total return equally profitable. This behavior is consistent with", "choices": {"A": "unreasonable calculation", "B": "avoid regret", "C": "Conservatism", "D": "Risk aversion"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "14", "prompt": "If someone said “You will definitely get into a top business school; you have top of our class!”, what mistake did this person make?", "choices": {"A": "Ignore sample size", "B": "Ignore the base probability and ignore the predicted value", "C": "Ignore the base probability", "D": "Ignore predictive value"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "15", "prompt": "In the simple heuristic model (in chapter 9) An investor with a higher coefficient a shows:", "choices": {"A": "Unable to give an answer", "B": "That investor is less confident", "C": "That investor is overconfident", "D": "That investor is not biased"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "16", "prompt": "Dividing income among different types of expenses is an example of:", "choices": {"A": "Pattern effect", "B": "Fear of loss", "C": "Unreasonable calculation", "D": "Specify by probability weight", "E": "Deviation from current state"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "17", "prompt": "For prospect $P_1(0.5, 100, 200)$. Use the utility function $U = \\ln W$. The expected utility value of the prospect is", "choices": {"A": "4.79", "B": "4.95", "C": "4.59"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "18", "prompt": "Your favorite breakfast food is hamburgers. Today you go to the bakery, You wonder if you should continue eating burgers today or should you eat bread char siu. You think for a moment and tell the seller to make you a loaf of char siu bread. Self-healing in this situation is:", "choices": {"A": "Self-awareness", "B": "Natural experience"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "20", "prompt": "One has a utility function of the form $U = -e^{-2w}$ (knowing $e \\approx 2.718$). This person is:", "choices": {"A": "People who are indifferent to risks", "B": "Risk Seekers", "C": "People who are afraid of risks"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "21", "prompt": "Decide between two prospects: ● A(0.80, $50, $0) ● B(0.40, $100, $0) Which option is preferred according to prospect theory?", "choices": {"A": "Outlook A due to risk aversion in the loss domain", "B": "Prospect B results from risk seeking in the loss domain", "C": "Neither prospect is preferred due to lack of loss aversion", "D": "Prospect B is due to risk seeking in the profit domain", "E": "Prospect A is due to risk aversion in the profit domain"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "22", "prompt": "For prospect $P_1(0.5, 100, 200)$. Use the utility function $U = \\ln W$. The expected utility value of the prospect is", "choices": {"A": "4.95", "B": "4.79", "C": "4.59"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "23", "prompt": "In the simple heuristic model (in chapter 9) An investor with a higher coefficient a shows:", "choices": {"A": "That investor is not biased", "B": "Unable to give an answer", "C": "That investor is overconfident", "D": "That investor is less confident"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "25", "prompt": "Statman (1997) argues that investors prefer stocks that pay cash dividends high because they will feel more comfortable spending, but will not feel comfortable when having to sell few stocks to have money to spend even though both options are assumed to yield a total return equally profitable. This behavior is consistent with", "choices": {"A": "Risk aversion", "B": "avoid regret", "C": "Conservatism", "D": "unreasonable calculation"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "27", "prompt": "Imagine you are a very shy person. You meet someone new and evaluate the person that is speaking boldly and sociably. A friend of yours who has a tendency to eat spoke boldly and very boisterously, judging the new friend to be a bit quiet and reserved. These reviews are examples of:", "choices": {"A": "Anchor decisions and adjustments", "B": "Experience typical situations", "C": "There are no deviations here", "D": "Unreasonable calculation"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "28", "prompt": "The consumer's optimal decision is", "choices": {"A": "Combining goods yields the highest profit", "B": "Combining goods gives the highest total utility", "C": "Combine the goods with the highest marginal utility", "D": "Optimal combination of goods according to budget constraints"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "29", "prompt": "A person provides confidence intervals that are too narrow when asked to make predictions about certain quantities. This is a sign of overconfidence", "choices": {"A": "Wrong estimate", "B": "Illusion of control", "C": "Too optimistic", "D": "Better than average effect"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "30", "prompt": "Risk-indifferent people are characterized by their utility function", "choices": {"A": "diminishing marginal utility", "B": "marginal utility increases", "C": "quadratic marginal utility", "D": "constant marginal utility", "E": "marginal utility is zero"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "31", "prompt": "Risk is often measured in", "choices": {"A": "expected average", "B": "standard deviation", "C": "variance", "D": "variance or standard deviation"}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Both variance and standard deviation are standard measures of risk (dispersion of returns)."}, {"source": "Multiple Choice (Part 1)", "number": "32", "prompt": "A person has the following value function according to prospect theory: * $v(w) = w^{0.8}$ if $w \\ge 0$ * $v(w) = -3(-w)^{0.8}$ if $w < 0$ The probability weight function of this person has the form: $$\\pi(p) = \\frac{p^\\gamma}{(p^\\gamma + (1-p)^\\gamma)^{1/\\gamma}}$$ With $\\gamma = 0.65$. Calculate the value of the prospect $P(0.001, -5000, 0)$ (round to two decimal places).", "choices": {"A": "-30.15", "B": "-6.18", "C": "-2.73", "D": "-10.87"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "33", "prompt": "You are an employee in a company. Assume your preference is followed according to prospect theory. Your company allows you to choose how you receive your salary Can be weekly or monthly. How will you choose to receive your salary (weekly or weekly? by month)? Assume your total monthly salary equals your total payments weekly salary; ignore the difference in interest you may receive on the account Your bank has different ways to receive salary.", "choices": {"A": "By month", "B": "By week"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "34", "prompt": "Suppose you have permission from your utility provider (electricity, water, etc.) to pay your bill. Orders by year instead of by month. Assuming you have enough money in your bank account to can pay the bill annually (the amount will be equal to the total monthly bills), meaning you Don't have to borrow money or use overdrafts. If your choice behavior follows prospect theory, you will choose the alternative (pay monthly or yearly)? Assumed to ignore the interest rate factor.", "choices": {"A": "By year", "B": "By month"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "35", "prompt": "The \"lottery ticket\" problem illustrates what aspect of prospect theory?", "choices": {"A": "Risk neutral", "B": "Searching for risks in the profitable domain", "C": "Fear of loss (loss)", "D": "Afraid of risks in the profit domain", "E": "Look for risk in the loss domain", "F": "Risk aversion in the loss domain"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "36", "prompt": "The \"insurance\" problem illustrates which aspect related to development theory hope?", "choices": {"A": "Afraid of risks in the profit domain", "B": "Risk aversion in the loss domain", "C": "Look for risk in the loss domain", "D": "Look for risk in the profit domain", "E": "Risk neutral", "F": "Fear of loss (loss)"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "37", "prompt": "The issue of \"working wages\" illustrates which aspect related to development theory? hope? (Work salary problem: the tendency to accept a job with a salary slightly lower than having lost your job or being unemployed.)", "choices": {"A": "Risk aversion in the loss domain", "B": "Fear of loss (loss)", "C": "Look for risk in the profit domain", "D": "Risk neutral", "E": "Look for risk in the loss domain", "F": "Afraid of risks in the profit area"}, "correct_key": "F", "correct_keys": ["F"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "38", "prompt": "The problem of \"Hollywood movie production\" illustrates an aspect related to theory prospect theory? (Problem of Hollywood film production: Hollywood studios produce a series of films despite the fact that the number of movies that bring in big profits is quite small compared to the total number of movies made out.)", "choices": {"A": "Afraid of risks in the profit domain", "B": "Look for risk in the domain of losses", "C": "Fear of loss (loss)", "D": "Risk neutral", "E": "Look for risk in the profit domain", "F": "Risk aversion in the loss domain"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "39", "prompt": "A person has the following value function according to prospect theory: * $v(w) = w^{0.55}$ if $w \\ge 0$ * $v(w) = -2(-w)^{0.55}$ if $w < 0$ Suppose this individual weights values according to probability (ignoring the probability weighting function, which means weighting equals probability: $\\pi(p) = p$). Calculate the value of the prospect $P(0.5, 2000, -1000)$.", "choices": {"A": "9.26", "B": "9.27", "C": "-11.97", "D": "12.03"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "46", "prompt": "Which of the following researchers is most widely recognized for their contributions of them in studying decision-making behavior:", "choices": {"A": "Allais & Hagen", "B": "Kahneman & Tversky", "C": "Modigliani & Miller", "D": "Fama & French"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "47", "prompt": "Dividing income among different types of expenses is an example of:", "choices": {"A": "Fear of loss", "B": "Deviation from current state", "C": "Pattern effect", "D": "Specify by probability weight", "E": "Unreasonable calculation"}, "correct_key": "E", "correct_keys": ["E"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "50", "prompt": "Self-examination can be beneficial, because it:", "choices": {"A": "Both ideas stated here are correct", "B": "Both ideas raised here are wrong", "C": "Usually results in correct responses", "D": "Save time"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "51", "prompt": "Typical situational testing can produce incorrect responses when:", "choices": {"A": "Judgments are made based on “match” rather than based on underlying probability", "B": "Judgments based on “match” produce the same response as judgments based on underlying probabilities", "C": "Judgments based on “match” produce a different response than judgments based on underlying probabilities", "D": "Judgment is made based on the underlying probability rather than based on “match"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "52", "prompt": "In Kahneman & Tversky's research on decision patterns, they discovered It turns out that even when the choices are essentially the same, people can take risks risks when these risks are described as:", "choices": {"A": "Potential profits", "B": "Potential losses", "C": "Low probability levels", "D": "High probability levels"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "53", "prompt": "What is the definition of heuristic:", "choices": {"A": "A decision occurs through the full use of cognitive systems", "B": "A distorted judgment about probability or frequency", "C": "A shortcut used to simplify decisions regarding a complex problem", "D": "A decision is made when all information is known"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "54", "prompt": "Which of the following types of heuristics involves position estimates along which dimension? that?", "choices": {"A": "Available heuristics", "B": "Illusion of association", "C": "Experience typical situations", "D": "Anchor decision"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "55", "prompt": "Which of the following heuristics explains the question “Is the sequence of coin tossing Heads/Heads/Tails/Tails happen randomly?”", "choices": {"A": "Neo decided", "B": "Available heuristics", "C": "Adjustment", "D": "Experience typical situations"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "56", "prompt": "Which of the following statements about heuristics is FALSE:", "choices": {"A": "Self-experimentation has both general and specific characteristics", "B": "Heuristics are more common in judgments under conditions of uncertainty", "C": "Self-examination is common in everyday life", "D": "Self-experience is bound to make mistakes"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "57", "prompt": "Which of the following researchers is most widely recognized for their contributions of them in studying decision-making behavior:", "choices": {"A": "Asch & Bem", "B": "Gilley & Pennebaker", "C": "Trope & Liberman", "D": "Kahneman & Tversky"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "58", "prompt": "Which of the following situations is an example of adjustment and decision anchoring heuristics?", "choices": {"A": "Becoming angry over an upsetting event, based on the ease with which a person can imagine the event happening in different ways", "B": "Evaluate the attractiveness of a potential mate based on the attractiveness of previous mates", "C": "Estimate the incidence of a specific disease based on prior knowledge of the disease's symptoms and prognosis", "D": "Estimate the incidence of a particular disease based on quick thinking about past experiences of that disease"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "59", "prompt": "What does prospect theory describe?", "choices": {"A": "The decision process in comparing different options", "B": "Simulation for comparative reasoning", "C": "Decision process in event forecasting", "D": "Decision process in complex social problems"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "60", "prompt": "What term is used in prospect theory to describe intrinsic criteria that humans use to compare the target value of an option to classify degrees strong favorite?", "choices": {"A": "Decision weight", "B": "Reference point", "C": "Familiarity", "D": "Base probability"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "61", "prompt": "Which of the following statements is true regarding the role model effect?", "choices": {"A": "People become cautious when alternative patterns are represented by losses (losses).", "B": "People are less inclined to take risks when alternative patterns are represented by gains (gains).", "C": "People tend to take risks when they know for sure they will succeed", "D": "The representation of alternative patterns as gains or losses is immaterial; Risk tolerance is determined by individual predispositions"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "62", "prompt": "The objective value function of prospect theory has the form:", "choices": {"A": "U-shaped", "B": "S shape", "C": "Straight line implies negative correlation", "D": "Straight line implies positive correlation"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "63", "prompt": "Which of the following types of heuristics is most closely related to the illusion of association?", "choices": {"A": "Adjustment", "B": "Available heuristics", "C": "Anchor decides", "D": "Experience typical situations"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "64", "prompt": "Which of the following is NOT an example of a situation in which a person Is it possible to use it yourself?", "choices": {"A": "Experiencing anger", "B": "Make decisions in your area of expertise", "C": "Tackle unimportant tasks", "D": "Experiencing avoidance emotions"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "65", "prompt": "Hindsight implies which of the following?", "choices": {"A": "The tendency to view the past as more positive than the present or future", "B": "Difficulty in simulating future situations that conflict with imagination or expectations", "C": "The tendency to seek confirming evidence and ignore information that suggests otherwise", "D": "The difficulty of ignoring knowledge of an actual outcome to make unbiased inferences about what could/should happen"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "66", "prompt": "What does expected utility theory make?", "choices": {"A": "The act of making inferences can be expressed through choices among alternatives, with specified values and probabilities of occurrence", "B": "All ideas mentioned here", "C": "The utility of a particular choice decreases over time as consequences occur", "D": "People make decisions based on outcomes that are less likely to maximize the benefits they seek"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "67", "prompt": "Imagine you are a very shy person. You meet someone new and evaluate That person is bold and sociable. A friend of yours who is inclined tends to speak boldly and very loudly, judging that new friend to be a bit quiet and discreet. These reviews are examples of:", "choices": {"A": "Experience typical situations", "B": "There are no deviations here", "C": "Unreasonable calculation", "D": "Anchor decisions and adjust"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "68", "prompt": "If a person said “You will definitely get into a top business school; you have top of our class!”,What mistake did this person make?", "choices": {"A": "Ignore predictive value", "B": "Ignore sample size", "C": "Ignore the base probability", "D": "Ignore the base probability and ignore the predicted value"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "69", "prompt": "Which of the following statements is most likely to describe Linda's life? when she completed her bachelor's degree in gender equality studies?", "choices": {"A": "Linda became a bank teller", "B": "Linda became a bank teller and a feminist", "C": "Not enough information", "D": "The two possibilities here are equally probable"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "70", "prompt": "Which of the following is a normative model of how decisions are made in the presence of underlying probability information?", "choices": {"A": "Prospect theory", "B": "Discount utility model", "C": "Bayes Theorem", "D": "Comparative reasoning"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "71", "prompt": "Kahneman & Tversky's prospect theory includes NO components next?", "choices": {"A": "A factor related to overconfidence that is applied directly to the value function in the loss domain", "B": "Value function that evaluates the outcomes of different prospects", "C": "Value function that is concave in the profit region and convex in the loss region, with the origin at the reference point separating the profit and loss regions", "D": "Probability weighting function that overestimates small probability levels and underestimates probability levels close to 1"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "73", "prompt": "In a famous experiment, volunteers were given background scenarios. The volunteers played the role of \"clients\" going to meet financial advisors. The authors of the study found that financial advisors did not object (did not help correct) deviations in the client's investment decisions - that is, putting all the money in a single type of investment. What psychological phenomenon explains this behavior?", "choices": {"A": "Financial advisors have antisocial personality disorder", "B": "Financial advisors are influenced by the probability weighting function of prospect theory, which causes them to overestimate events that have a very low probability of occurring.", "C": "Financial advisors don't want to stir up cognitive dissonance in clients", "D": "Financial advisors are overconfident about their abilities to provide financial advice"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "74", "prompt": "In a finance class, the instructor posed the following question to students class: “Which of the following statements is most likely to describe Linda's life? after she completed her bachelor's degree in gender equity studies? There are two options choose here: (1) Linda becomes a bank teller; and (2) Linda becomes a bank teller and a feminist.” Most of you Students choose answer (2). What problem does this trend represent? Choose answer The correct answer is below.", "choices": {"A": "Anchor decisions and adjustments", "B": "Inbuilt deviation", "C": "Illusion of association", "D": "Overconfidence"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "75", "prompt": "In an experiment of tossing a coin heads (N) and tails (S), there are two sequences as follows: (1) N-S-N-S-N-S-N-S-S and (2) S-N-S-N-S-N-N-N-S. Many people believe that sequence (1) has a higher probability of occurring. What kind of deviation is this?", "choices": {"A": "Gambler's illusion", "B": "Anchor the decision", "C": "Available heuristics", "D": "Illusion of association"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "76", "prompt": "During the fundraising campaign to support COVID-19 epidemic prevention, fundraisers realized that people will donate more if they are given donation options of 100$, 250$, 1000$ and 5000$ instead of offering donation options of 50$, 75$, 100$ and 150$. This donation involves:", "choices": {"A": "Pattern effect", "B": "Available heuristics", "C": "Anchor decision", "D": "Experience typical situations"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "78", "prompt": "In a quick question and answer quiz, there is a question “How long does it take for 5 machines to produce 5 product is 5 minutes. So how long does it take for 100 machines to create 100 products? Mostly The respondents all thought the answer was 100 minutes (or this was the answer that everyone thought people tend to think immediately in their heads). However, the answer exactly 5 minutes. This error most likely originates from what type of heuristic next?", "choices": {"A": "Unreasonable calculation", "B": "Experience typical situations", "C": "Self-test available", "D": "Anchor decides"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "79", "prompt": "In the Fama-French three-factor model, in addition to the market risk premium factor What abnormalities are related to the remaining two valuation factors?", "choices": {"A": "Value vs Growth & Price Inertia Effect", "B": "Slow reaction to earnings announcements & small company effect", "C": "The small company effect & the value vs. growth effect", "D": "Price inertia & slow reaction to earnings announcements"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "80", "prompt": "In sports competitions, we often see that the team in the group takes the lead play more conservatively (take less risk) than the team in the bottom group. Theo interpretation of prospect theory, what is the reference point for determining the factor “gain” (domain “profit”) and “loss” (domain “loss”)?", "choices": {"A": "Difference in achievements between the two teams", "B": "Total achievements of the two teams", "C": "Your team's achievements", "D": "Competitor's achievements"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "81", "prompt": "In sports competitions, we often see that the team in the group takes the lead play more conservatively (take less risk) than the team in the bottom group. Theo the explanation of prospect theory, the competitive tendency of the leading team Express attitude:", "choices": {"A": "Afraid of risks in the \"profit\" domain", "B": "Search for risks in the “loss” domain", "C": "Risk aversion in the “loss” domain", "D": "Look for risks in the “profit” domain"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "82", "prompt": "In sports competitions, we often see that the team in the group takes the lead play more conservatively (take less risk) than the team in the bottom group. Theo the explanation of prospect theory, the tendency of the bottom team to compete Express attitude:", "choices": {"A": "Risk aversion in the “profit” domain", "B": "Look for risks in the “loss” domain", "C": "Risk aversion in the “loss” domain", "D": "Look for risks in the “profit” domain"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 1)", "number": "83", "prompt": "The random walk hypothesis of efficient market theory states that:", "choices": {"A": "Historical stock returns follow a random walk", "B": "Stock price movements follow a random walk", "C": "Historical prices of stocks follow a random walk", "D": "Short-term investment returns are inherently unpredictable"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "175", "prompt": "Conventional finance theories assume that investors are ________ and behavioral finance assumes that they are ________.", "choices": {"A": "absurd; absurd", "B": "reasonable; may not be reasonable", "C": "reasonable; is absurd", "D": "may not be reasonable; may not be unreasonable", "E": "may not be reasonable; is absurd"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "B (Conventional theories assume that investors are rational, and behavioral finance assumes that they can be irrational)."}, {"source": "Multiple Choice (Part 2)", "number": "176", "prompt": "The core premise of behavioral finance is:", "choices": {"A": "Conventional finance theory ignores how people actually make decisions and the behavioral biases that create differences in the markets.", "B": "Conventional financial theory considers how people use emotions to make decisions, but markets are driven by rational utility-maximizing investors.", "C": "Conventional financial theory should ignore how ordinary people make decisions because markets are driven by much more sophisticated investors.", "D": "Conventional financial theory considers how people use emotions to make decisions, but markets are driven by profit-maximizing investors.", "E": "None of the options are correct."}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "177", "prompt": "Some economists believe that the literature on market anomalies reflects that investors:", "choices": {"A": "Have the ability to always process information accurately and thus they infer accurate probability distributions of future rates of return; and make consistent and optimal decisions.", "B": "Inability to always process information correctly and thus infer inaccurate probability distributions of future rates of return; but they still make consistent and optimal decisions.", "C": "Able to consistently process information accurately and thereby derive accurate probability distributions of rates of return; but they often make inconsistent or suboptimal decisions.", "D": "Inability to always process information correctly and thus infer inaccurate probability distributions of future rates of return; and they often make inconsistent or suboptimal decisions."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "D (Investor's inability to always process information accurately, infer skewed probability distributions, and make inconsistent or suboptimal decisions)."}, {"source": "Multiple Choice (Part 2)", "number": "178", "prompt": "Information processing errors include:", "choices": {"A": "I and II", "B": "I and III", "C": "III and IV", "D": "IV only", "E": "I, II and III"}, "correct_key": "E", "correct_keys": ["E"], "explanation": "E (Information processing errors include forecasting errors, overconfidence, and conservatism; while framing is a behavioral/preference error)."}, {"source": "Multiple Choice (Part 2)", "number": "179", "prompt": "Forecasting errors are important because empirical studies show that people often:", "choices": {"A": "Underestimating the importance of recent information.", "B": "Overestimating the importance of recent information (recent information overweight).", "C": "Accurately evaluate recent information.", "D": "Rate recent information low or high depending on whether it is good or bad.", "E": "There is no correct answer."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "B (Decision makers tend to exaggerate the importance of recent information - overweighing recent developments)."}, {"source": "Multiple Choice (Part 2)", "number": "180", "prompt": "DeBondt and Thaler believe that extremely high P/E ratios are the result of investors maintaining:", "choices": {"A": "Earnings expectations that are too extreme (too optimistic or too pessimistic).", "B": "Income expectations are not extreme enough.", "C": "Stock price expectations are too extreme.", "D": "Stock price expectations are not extreme enough."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "A (Because earnings expectations are too extreme, leading to overvaluation of growth stocks and undervaluation of value stocks)."}, {"source": "Multiple Choice (Part 2)", "number": "181", "prompt": "If an individual assigns too much weight to recent information relative to previous baseline beliefs/information, what error have they made?", "choices": {"A": "Framing", "B": "Selection bias", "C": "Overconfidence", "D": "Conservatism", "E": "Forecast error"}, "correct_key": "E", "correct_keys": ["E"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "182", "prompt": "Single men often trade stocks more often than single women. This comes from:", "choices": {"A": "Framing effect", "B": "Avoid regret", "C": "Overconfidence", "D": "Conservatism"}, "correct_key": "C", "correct_keys": ["C"], "explanation": "C (Overconfidence is greater in men, causing them to believe they have superior stock-picking abilities and trade more)."}, {"source": "Multiple Choice (Part 2)", "number": "183", "prompt": "Which of the following factors might explain the popularity of active portfolio management over passive management despite poorer average performance?", "choices": {"A": "Forecast error", "B": "Overconfidence", "C": "Mental accounting", "D": "Conservatism", "E": "Avoid regret"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "184", "prompt": "Barber and Odean (2000) classify portfolios according to their turnover rate and report that the difference in net returns between the most and least traded groups is as much as 7% per year. They attribute this excessive trading behavior to:", "choices": {"A": "Overconfidence", "B": "Framing effect", "C": "Avoid regret", "D": "Ignore sample size"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "185", "prompt": "Which cognitive bias shows that investors are too slow to update their beliefs in response to new information and evidence?", "choices": {"A": "Framing effect", "B": "Avoid regret", "C": "Overconfidence", "D": "Conservatism bias", "E": "None of the options are correct"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "186", "prompt": "Psychologists have found that decision makers blame themselves more when a negative outcome results from an unusual/nontraditional decision. What is this psychological phenomenon called?", "choices": {"A": "Regret avoidance", "B": "Framing effect", "C": "Mental accounting", "D": "Overconfidence", "E": "Obnoxicity poisoning"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "187", "prompt": "An example of ________ is an individual rejecting an investment opportunity when it is described in terms of risk of loss of potential gain, but accepting the same opportunity if it is described in terms of risk of minimizing potential loss.", "choices": {"A": "Framing effect", "B": "Avoid regret", "C": "Overconfidence", "D": "Conservatism"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "A (Framing effect)."}, {"source": "Multiple Choice (Part 2)", "number": "188", "prompt": "An example of the framing effect is that a person may reject an investment when it is framed in terms of risk around potential gains, but accept the same investment if it is framed in terms of risk around potential loss.", "choices": {"A": "Framing", "B": "Regret avoidance", "C": "Overconfidence", "D": "Conservatism"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "189", "prompt": "Statman (1997) argues that ________ is consistent with some investors' irrational preferences for stocks with high cash dividends and a tendency to hold losing positions for too long.", "choices": {"A": "Mental accounting", "B": "Regret avoidance", "C": "Overconfidence", "D": "Conservatism"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "190", "prompt": "An example of ________ is that buying a blue-chip stock that has lost value is less painful than losing money on an unknown startup.", "choices": {"A": "Mental accounting", "B": "Regret avoidance", "C": "Overconfidence (Overconfidence)", "D": "Conservatism"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "191", "prompt": "Arbitrageurs may not be able to exploit behavioral deviations due to: I) Fundamental risk II) Implementation costs (Implementation costs) III) Model risk IV) Conservatism V) Regret avoidance", "choices": {"A": "I and II only", "B": "I, II and III", "C": "I, II, III and V", "D": "II, III and IV", "E": "IV and V"}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "192", "prompt": "________ are good examples of limits to arbitrage because they demonstrate that the law of one price is violated. I) Siamese twin companies II) Unit trusts III) Closed-end funds IV) Open-end funds V) Equity carve-outs", "choices": {"A": "I and II", "B": "I, II and III", "C": "I, III and V", "D": "IV and V", "E": "V"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "193", "prompt": "A FIPS ratio below 1.0 is considered a:", "choices": {"A": "Bearish signal.", "B": "Bullish signal.", "C": "Bearish signals by some technical analysts and bullish signals by other technical analysts.", "D": "Bullish signals from some fundamental analysts.", "E": "Bearish signals by some technical analysts, bullish signals by other technical analysts, and bullish signals by some fundamental analysts."}, "correct_key": "B", "correct_keys": ["B"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "194", "prompt": "On August 27, 2012, there were 1,455 stocks up on the NYSE and 1,553 stocks down. The volume of increasing stocks was 852,581 and the volume of falling stocks was 1,058,312. The FIPS rate for that day is:", "choices": {"A": "0.87, increase in price", "B": "0.87, discount", "C": "1.15, price increase", "D": "1.15, discount"}, "correct_key": "D", "correct_keys": ["D"], "explanation": "$$\\text{Trin} = \\frac{\\text{Number of shares decreased} / \\text{Number of shares increased}}{\\text{Volume decreased} / \\text{Volume increased}} = \\frac{1553 / 1455}{1058312 / 852581} = \\frac{1.0674}{1.2413} \\approx 0.86$$ Or another calculation: $$\\text{Trin} = \\frac{\\text{Decreased Volume} / \\text{Decreased Shares}}{\\text{Increased Volume} / \\text{Number rising stocks}} = \\frac{1058312 / 1553}{852581 / 1455} = \\frac{681.46}{585.97} \\approx 1.16$$ A Trin ratio greater than 1 is considered a bearish signal because falling stocks have a higher average trading volume than rising stocks, shows great selling pressure on the market."}, {"source": "Multiple Choice (Part 2)", "number": "195", "prompt": "Related to moving averages, it is considered a ________ signal when the market price breaks the moving average from ________.", "choices": {"A": "discount; bottom up", "B": "price increase; bottom up", "C": "None of the options are correct", "D": "price increase; top down"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "When the market price breaks the moving average line from below to the upside, this is a bullish signal. On the contrary, when the market price crosses the moving average line from top to bottom, this is a bearish signal."}, {"source": "Multiple Choice (Part 2)", "number": "196", "prompt": "Two common moving average periods are:", "choices": {"A": "90 days and 52 weeks.", "B": "180 days and three years.", "C": "180 days and two years.", "D": "200 days and 53 weeks.", "E": "200 days and two years."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Two popular moving average periods in technical analysis are 200 days and 53 weeks."}, {"source": "Multiple Choice (Part 2)", "number": "197", "prompt": "________ is a measure of the degree to which a movement in a market index is reflected in the price movements of all stocks in the market.", "choices": {"A": "Put-call ratio (Put-call ratio)", "B": "Trin ratio (Trin ratio)", "C": "Market Breadth", "D": "Confidence index", "E": "All of the above options"}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Market breadth measures the spread of the general index's up/down trend across all component stocks."}, {"source": "Multiple Choice (Part 2)", "number": "198", "prompt": "The confidence index is calculated from ________ and higher values are considered ________ signals.", "choices": {"A": "bond yield; discount", "B": "odd lot trading; discount", "C": "odd lot trading; price increase", "D": "put/call ratio; price increase", "E": "bond yields; price increase"}, "correct_key": "E", "correct_keys": ["E"], "explanation": "The confidence index is equal to the ratio between the yield on high-rated corporate bonds and the yield on medium-rated corporate bonds. An increase in this ratio shows that investors are willing to accept more risk, which is a signal of price increase."}, {"source": "Multiple Choice (Part 2)", "number": "199", "prompt": "The put/call ratio is calculated as ________ and higher values are considered as ________ signals.", "choices": {"A": "number of outstanding put options divided by number of outstanding call options; price increase or decrease", "B": "number of outstanding put options divided by number of outstanding call options; price increase", "C": "number of outstanding put options divided by number of outstanding call options; discount", "D": "number of call options outstanding divided by number of put options outstanding; price increase", "E": "number of call options outstanding divided by number of put options outstanding; discount"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Put/call ratio = number of put options / number of call options. Higher values ​​indicate increased risk aversion (bearish signal). However, contrarians view this extremely high ratio as a sign that the market is oversold and is about to reverse upward (a bullish signal). Therefore, it can have both meanings depending on how it is analyzed."}, {"source": "Multiple Choice (Part 2)", "number": "200", "prompt": "Efficient market hypothesis (EMH):", "choices": {"A": "implies that security prices accurately reflect the information available to investors.", "B": "has little empirical value.", "C": "implies that it will be difficult for active traders to outperform a buy-and-hold strategy.", "D": "has little empirical value and implies that it will be difficult for active traders to outperform a buy-and-hold strategy.", "E": "implies that security prices accurately reflect the information available to investors and that it will be difficult for active traders to outperform a buy-and-hold strategy."}, "correct_key": "E", "correct_keys": ["E"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "201", "prompt": "Market efficiency tests have focused on:", "choices": {"A": "the mean-variance efficiency of the selected market proxy.", "B": "strategies that can deliver superior risk-adjusted returns.", "C": "actual investment results of professional managers.", "D": "strategies that can deliver superior risk-adjusted returns and real-world investment results by professional managers.", "E": "the mean-variance efficiency of the selected market proxy and the strategies that will provide superior risk-adjusted returns."}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "202", "prompt": "Documents/research on market anomalies (anomalies literature):", "choices": {"A": "provides a refutation of the conclusion about market efficiency.", "B": "provides conclusive support for market efficiency.", "C": "suggests that some strategies will deliver superior returns.", "D": "provides a refutation of the conclusion about market efficiency and shows that some strategies will yield superior returns.", "E": "There is no correct option."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Market anomalies suggest that some strategies provide superior risk-adjusted returns, but there is not enough basis to completely reject EMH due to possible model risk (joint hypothesis problem)."}, {"source": "Multiple Choice (Part 2)", "number": "203", "prompt": "Behavioral finance argues that:", "choices": {"A": "Even if stock prices are distorted, exploiting them can still be difficult.", "B": "traders' failure to discover successful trading rules cannot be considered definitive evidence of market efficiency.", "C": "investors are completely reasonable.", "D": "Even if stock prices are skewed, exploiting them can still be difficult; and traders' failure to discover successful trading rules cannot be considered definitive evidence of market efficiency.", "E": "All of the above options."}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "204", "prompt": "The market will be inefficient if irrational investors ________ and the actions of arbitrageurs are ________.", "choices": {"A": "exists; unlimited", "B": "does not exist; unlimited", "C": "exist; limited", "D": "does not exist; limit"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "205", "prompt": "If the price is correct, ________; and if the price is incorrect, ________.", "choices": {"A": "no opportunity to make easy profits; no opportunity to make easy profits", "B": "no opportunity to make easy profits; There are opportunities to make easy profits", "C": "there are easy profit opportunities; There are opportunities to make easy profits", "D": "there are easy profit opportunities; There is no opportunity to make easy profits"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "This is a deeply theoretical question about \"arbitrage limits\". If the price is right then there is clearly no opportunity to make easy money. But even if the price is skewed, due to the risks and limits of arbitrage, investors still cannot easily earn risk-free profits."}, {"source": "Multiple Choice (Part 2)", "number": "206", "prompt": "________ can cause investors to misjudge the actual probability of possible events or the associated rate of return.", "choices": {"A": "Information processing errors (Information processing errors)", "B": "Framing errors", "C": "Mental accounting errors", "D": "Regret avoidance"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "207", "prompt": "Kahneman and Tversky (1973) reported that people ________ with respect to recent experience compared to previous beliefs; and tend to make ________ forecasts due to the uncertainty of the information they possess.", "choices": {"A": "assigns too few weights; too extreme", "B": "assigning too many weights; too extreme", "C": "assigns too few weights; not extreme enough", "D": "assigns too many weights; not extreme enough"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "People tend to overreact to recent information and make extreme predictions."}, {"source": "Multiple Choice (Part 2)", "number": "208", "prompt": "Errors in information processing can cause investors to misjudge:", "choices": {"A": "actual probabilities of events and associated returns.", "B": "the occurrence of possible events.", "C": "There can only be a rate of return.", "D": "Effects of accounting manipulation.", "E": "Financial fraud."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Information processing errors cause investors to misjudge both the probability of events and the related return rates (including both profit and loss domains)."}, {"source": "Multiple Choice (Part 2)", "number": "210", "prompt": "DeBondt and Thaler (1990) argue that the P/E effect can be explained by:", "choices": {"A": "Forecasting errors.", "B": "Income expectations are too extreme.", "C": "Income expectations are not extreme enough.", "D": "Avoid regret.", "E": "Forecast errors and earnings expectations are too extreme."}, "correct_key": "E", "correct_keys": ["E"], "explanation": "Extremely high P/E ratios are the result of investors making erroneous forecasts and maintaining earnings expectations that are too extreme (too optimistic for growth stocks and too pessimistic for value stocks)."}, {"source": "Multiple Choice (Part 2)", "number": "211", "prompt": "Barber and Odean (2001) report that men trade ________ more often than women, and frequent trading leads to ________ returns.", "choices": {"A": "less; outstanding", "B": "less; lower", "C": "more; outstanding", "D": "more; lower"}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Due to greater overconfidence, men trade about 45% more than women, and this overtrading drags down their net returns due to high trading costs."}, {"source": "Multiple Choice (Part 2)", "number": "212", "prompt": "Conservatism bias implies that investors are too ________ in updating their beliefs in response to new evidence, and they initially ________ in response to new information.", "choices": {"A": "quickly; overreaction", "B": "quickly; underreaction (poor response)", "C": "slow; overreaction", "D": "slow; under-reaction (under-reaction)"}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Conservatism bias causes people to cling to old beliefs and be too slow in updating new information, leading to underreaction of stock prices."}, {"source": "Multiple Choice (Part 2)", "number": "213", "prompt": "If information processing were perfect, many studies conclude that individuals would still tend to make ________ decisions using that information due to ________.", "choices": {"A": "less reasonable; behavioral biases", "B": "is completely reasonable; behavioral biases", "C": "is less reasonable; basic risk", "D": "is completely reasonable; basic risk", "E": "makes perfect sense; Maximize benefits"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Even with perfect information processing (no cognitive errors), behavioral preferences or psychological aversions (irrational preferences) still cause them to make suboptimal decisions according to traditional economics."}, {"source": "Multiple Choice (Part 2)", "number": "214", "prompt": "Assumptions regarding the shape of the investor's utility function differ between conventional theory and prospect theory. Conventional theory assumes that utility functions are ________.", "choices": {"A": "concave over the entire asset domain and defined in terms of wealth; convex in the loss region, concave in the profit region (S-shaped) and determined based on the change in assets (profit/loss) compared to the reference point", "B": "is convex to the entire asset domain and is defined in terms of wealth; convex in the loss region, concave in the profit region (S-shaped) and determined based on the change in assets compared to the reference point", "C": "S-shaped (convex in the loss region and concave in the profit region) and is defined based on the change in assets compared to the reference point; concave with respect to the entire asset domain and defined in terms of wealth", "D": "S-shaped and defined by wealth; concave with respect to the entire asset domain and is defined in terms of the asset's change relative to a reference point", "E": "convex for wealth; concave with respect to wealth and is defined based on the change in wealth relative to a reference point"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Traditional economics assumes people are always risk averse (concave utility function with respect to total assets $w$). Prospect theory assumes an S-shaped value function: concave in the gain domain (risk averse) and convex in the loss domain (risk seeking), based on the change in assets relative to a reference point rather than total assets."}, {"source": "Multiple Choice (Part 2)", "number": "215", "prompt": "The law of one price states that arbitrage forces the prices of identical assets to be equal. However, experimental evidence shows that this rule is violated in:", "choices": {"A": "Siamese twins", "B": "Equity carve-outs", "C": "Closed-end funds", "D": "Twin companies and closed-end funds", "E": "All of the above"}, "correct_key": "E", "correct_keys": ["E"], "explanation": "These are classic examples of market inefficiencies and bounded arbitrage, where identical assets or equivalent cash flows trade at different prices over long periods of time."}, {"source": "Multiple Choice (Part 2)", "number": "216", "prompt": "Kahneman and Tversky (1973) reported that people assign ________ weight to recent experience when making forecasts. This reflects a ________ bias.", "choices": {"A": "too little; hyper-rationality", "B": "too little; conservative (conservatism bias)", "C": "too much; framing", "D": "too much; memory (memory bias / availability bias)"}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Due to availability/memory bias, people give too much weight to the most recent information or events when making predictions about the future."}, {"source": "Multiple Choice (Part 2)", "number": "217", "prompt": "Kahneman and Tversky (1973) reported that ________ places too much emphasis on recent experiences when compared with prior beliefs when making forecasts.", "choices": {"A": "young male", "B": "young female", "C": "everyone", "D": "older men", "E": "older female"}, "correct_key": "C", "correct_keys": ["C"], "explanation": "This is a common psychological characteristic of humans when processing information and making predictions."}, {"source": "Multiple Choice (Part 2)", "number": "218", "prompt": "Barber and Odean (2001) report that men trade ________ more often than women.", "choices": {"A": "less", "B": "less in bearish markets", "C": "more in bull markets", "D": "more (more often)"}, "correct_key": "D", "correct_keys": ["D"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "219", "prompt": "Barber and Odean (2001) report that women trade ________ more often than men.", "choices": {"A": "less", "B": "less in bearish markets", "C": "more in bull markets", "D": "more"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "220", "prompt": "Barber and Odean (2001) reported that men ________ compared to women.", "choices": {"A": "earn higher profits", "B": "earn lower profits", "C": "earns the same profit", "D": "creates lower transaction costs"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Men's too frequent trading leads to high trading costs, significantly reducing real profits compared to women."}, {"source": "Multiple Choice (Part 2)", "number": "221", "prompt": "Barber and Odean (2001) reported that women ________ compared to men.", "choices": {"A": "earn higher profits", "B": "earn lower profits", "C": "earns the same profit", "D": "creates higher transaction costs"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "222", "prompt": "The ________ effect can help explain the inertia/momentum of stock prices in the market.", "choices": {"A": "Conservatism", "B": "Regret avoidance", "C": "Prospect theory", "D": "Mental accounting", "E": "Model risk"}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Mental accounting combined with the house-money effect can create slow price reactions leading to inertia/momentum in stock prices."}, {"source": "Multiple Choice (Part 2)", "number": "223", "prompt": "Research on Siamese twins finds ________, which ________ the efficient market hypothesis (EMH).", "choices": {"A": "relative valuation bias; support", "B": "relatively accurate valuation; not supported", "C": "relative valuation bias; not supported", "D": "relatively accurate valuation; support"}, "correct_key": "C", "correct_keys": ["C"], "explanation": "The fact that two stocks representing the same underlying cash flows trade at severely skewed relative valuations over long periods of time is a strong case against EMH."}, {"source": "Multiple Choice (Part 2)", "number": "224", "prompt": "Studies of equity carve-outs find ________, which ________ the law of one price.", "choices": {"A": "strong support for the law of one price; support", "B": "support for the law of one price; violation", "C": "evidence of violation of the law of one price; violation", "D": "evidence of violation of the law of one price; support"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "225", "prompt": "Studies of closed-end funds find ________, which ________ the Efficient Market Hypothesis (EMH).", "choices": {"A": "trading price is higher than NAV; suit", "B": "trading price is higher than NAV; does not fit", "C": "discounted trading price compared to NAV; suit", "D": "discounted trading price compared to NAV; does not fit", "E": "transaction price at premium or discount compared to NAV; Not suitable for"}, "correct_key": "E", "correct_keys": ["E"], "explanation": "Closed-end funds frequently trade at prices far removed from their net asset value (NAV) (at surplus, at discount), which is completely inconsistent with EMH."}, {"source": "Multiple Choice (Part 2)", "number": "226", "prompt": "________ measures the degree to which a security has outperformed or underperformed the overall market or its specific industry.", "choices": {"A": "Put-call ratio", "B": "FIPS Ratio", "C": "Market breadth", "D": "Relative strength", "E": "All of the above options"}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Relative strength is equal to the ratio of a security's price to the industry or general market price index, which helps evaluate the superior/underperformance of that security."}, {"source": "Multiple Choice (Part 2)", "number": "227", "prompt": "Which choice is preferred according to prospect theory?", "choices": {"A": "Prospect A is due to risk aversion in the profit domain", "B": "Prospect B is due to the search for risk in the profit domain", "C": "Prospect A is due to risk aversion in the loss domain", "D": "Prospect B is due to risk seeking in the loss domain", "E": "Neither prospect is preferred due to lack of loss aversion"}, "correct_key": "A", "correct_keys": ["A"], "explanation": ""}, {"source": "Multiple Choice (Part 2)", "number": "228", "prompt": "Statman (1997) argues. that investors prefer stocks with high cash dividends that they feel they are free to spend, but will not dip into capital by selling a few shares of another stock with the same total rate of return. This behavior is consistent with...", "choices": {"A": "Risk aversion (risk aversion)", "B": "Conservatism (conservatism)", "C": "Mental accounting (psychological accounting)", "D": "Regret avoidance (avoiding regret)"}, "correct_key": "C", "correct_keys": ["C"], "explanation": ""}, {"source": "Multiple Choice (Multi-Select)", "number": "6", "prompt": "According to prospect theory, choice preferences in the matter of \"work wages\" imply:", "choices": {"A": "Risk aversion in low probability areas", "B": "Look for risks in low probability areas", "C": "Look for risks in high probability zones", "D": "Look for risk in the loss domain", "E": "Risk aversion in high probability areas", "F": "Afraid of risks in the profit area", "G": "Look for risk in the profit domain", "H": "Risk aversion in the loss domain"}, "correct_key": "E", "correct_keys": ["E", "F"], "explanation": "(Multiple correct options: E, F. Selected E as primary choice.)"}, {"source": "Multiple Choice (Part 1)", "number": "10", "prompt": "The probability weight function helps explain which of the following behaviors:", "choices": {"A": "Teachers respond more to an incentive in terms of a loss than to one in terms of a gain.", "B": "Individuals choose to deposit money in a type of savings account that does not allow withdrawal before the maturity date even though it offers a lower interest rate than an account that allows withdrawals at any time", "C": "Individuals overinsure homes where the probability of loss is low, but not cars where the probability of loss is higher.", "D": "Drivers are less responsive to a toll increase if payment is made via automated toll collection than if payment is made in cash"}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct (Overinsuring homes when the probability of loss is low is a classic example of overweighting small probabilities, explained by the probability weighting function of prospect theory. Note: Duplicate questions 19 and 26 have been removed, and this question has been corrected to single-select as option A is explained by loss aversion rather than probability weighting.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "24", "prompt": "According to prospect theory, choice preferences in the matter of \"work wages\" imply:", "choices": {"A": "Risk aversion in low probability areas", "B": "Look for risks in low probability areas", "C": "Look for risk in the profit domain", "D": "Risk aversion in high probability areas", "E": "Look for risk in the loss domain", "F": "Look for risks in high probability zones", "G": "Afraid of risks in the profit area", "H": "Risk aversion in the loss domain"}, "correct_key": "D", "correct_keys": ["D", "G"], "explanation": "(Multiple correct options: D, G. Selected D as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "40", "prompt": "According to prospect theory, choice preferences in the \"lottery\" problem imply:", "choices": {"A": "Look for risks in low probability zones", "B": "Risk aversion in the loss domain", "C": "Searching for risks in the profitable domain", "D": "Afraid of risks in the profit domain", "E": "Look for risk in the loss domain", "F": "Risk aversion in high probability areas", "G": "Risk aversion in low probability areas", "H": "Search for risk in the high probability zone"}, "correct_key": "A", "correct_keys": ["A", "C"], "explanation": "(Multiple correct options: A, C. Selected A as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "41", "prompt": "According to prospect theory, choice preferences in the matter of \"insurance\" imply:", "choices": {"A": "Look for risk in the loss domain", "B": "Risk aversion in the loss domain", "C": "Look for risks in low probability areas", "D": "Risk aversion in high probability areas", "E": "Risk aversion in low probability areas", "F": "Look for risks in high probability zones", "G": "Look for risk in the profit domain", "H": "Risk aversion in the profit domain"}, "correct_key": "B", "correct_keys": ["B", "E"], "explanation": "(Multiple correct options: B, E. Selected B as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "42", "prompt": "According to prospect theory, choice preferences in the matter of \"work wages\" function Italy:", "choices": {"A": "Risk aversion in low probability areas", "B": "Risk aversion in the loss domain", "C": "Look for risk in the profit domain", "D": "Look for risks in high probability zones", "E": "Risk aversion in high probability areas", "F": "Search for risk in the loss domain", "G": "Look for risks in low probability areas", "H": "Afraid of risks in the profit area"}, "correct_key": "E", "correct_keys": ["E", "H"], "explanation": "(Multiple correct options: E, H. Selected E as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "43", "prompt": "According to prospect theory, choice preferences in the problem of\"film production Hollywood\" implies:", "choices": {"A": "Risk aversion in low probability areas", "B": "Risk aversion in the loss domain", "C": "Look for risks in low probability areas", "D": "Look for risk in the profit domain", "E": "Afraid of risks in the profit domain", "F": "Risk aversion in high probability areas", "G": "Look for risks in high probability zones", "H": "Look for risk in the domain of losses"}, "correct_key": "G", "correct_keys": ["G", "H"], "explanation": "(Multiple correct options: G, H. Selected G as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "44", "prompt": "According to the probability weight function of prospect theory:", "choices": {"A": "Individuals (on average) prefer the possibility of receiving a lottery win to the possibility of receiving a certain amount of the same expected value if the probability of winning the lottery is very low, and prefer the certain amount if the probability of winning the lottery is high (i.e. close to 1)", "B": "Individuals consider all probabilities when making decisions", "C": "Individuals overemphasize low-probability events when making decisions and discount moderate and high-probability events", "D": "Individuals give more weight to the probability of recent outcomes when making decisions and discount the probability of things that have happened before", "E": "Individuals are risk averse for high probability events and risk seeking for low probability events."}, "correct_key": "A", "correct_keys": ["A", "C"], "explanation": "(Multiple correct options: A, C. Typos in original test bank corrected: Choice A now correctly states that individuals prefer the certain amount for high probability lottery winnings, and Choice C correctly states they discount moderate and high-probability events.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "45", "prompt": "Disposition effect occurs when:", "choices": {"A": "Individuals use the purchase price of an asset as a reference point when evaluating their wealth (asset) status", "B": "Individuals are risk averse", "C": "Individuals seek risk in the loss domain", "D": "Individuals value losses differently from gains", "E": "Individuals value the probability that an asset will increase in value in the future"}, "correct_key": "A", "correct_keys": ["A", "D"], "explanation": "(Multiple correct options: A, D. Selected A as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "48", "prompt": "Specifying probability weights helps explain which of the following behaviors:", "choices": {"A": "Individuals purchase lottery tickets with a low probability of winning a large prize even if the ticket purchase has a negative expected value", "B": "Individuals overinsure homes where the probability of loss is low, but not cars where the probability of loss is higher", "C": "Individuals choose to deposit money in a type of savings account that does not allow withdrawal before the maturity date even though it offers a lower interest rate than an account that allows withdrawals at any time", "D": "Teachers respond more to an incentive in the form of a loss than to an incentive in the form of a gain.", "E": "Drivers are less responsive to a toll increase if payment is made via automated toll collection than if payment is made in cash"}, "correct_key": "A", "correct_keys": ["A", "B"], "explanation": "(Multiple correct options: A, B. Selected A as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "72", "prompt": "Which of the following situations is caused by overconfidence?", "choices": {"A": "The tendency to think that CEOs are geniuses", "B": "The tendency to avoid anything you might regret later", "C": "In fact, only 5% to 10% of the students in the class had the correct answer about the weight of the Earth within the 90% confidence interval", "D": "The tendency for people to think they have very smart friends"}, "correct_key": "A", "correct_keys": ["A", "C", "D"], "explanation": "(Multiple correct options: A, C, D. Selected A as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "77", "prompt": "Which of the following behaviors represents unreasonable calculation?", "choices": {"A": "People save at low interest rates to get money to travel, and at the same time take out consumer loans at higher interest rates to buy cars", "B": "Instead of depositing a large sum of money into just one savings book, people divide that amount into many small, equal amounts divided into multiple savings books at the same time, so they only need to close one (or a few) books depending on their unusual withdrawal needs.", "C": "People are willing to spend more when using credit cards than when using cash.", "D": "Investors allocate their money into a portfolio of blue-chip stocks (safe) and at the same time a portfolio of penny stocks (highly speculative).", "E": "People divide their income between regular consumption and retirement savings"}, "correct_key": "A", "correct_keys": ["A", "C", "D", "E"], "explanation": "(Multiple correct options: A, C, D, E. Selected A as primary choice.)"}, {"source": "Multiple Choice (Multi-Select)", "number": "84", "prompt": "What evidence below shows that investors experience cognitive dissonance (cognitive dissonance)? (many answers)", "choices": {"A": "Investors buy and sell stocks very quickly", "B": "Investors do not remember their negative investment performance in the past", "C": "Investors hold poorly performing investment funds", "D": "Investors choose to invest in assets that already have many investments involved"}, "correct_key": "B", "correct_keys": ["B", "C"], "explanation": "(Multiple correct options: B, C. Selected B as primary choice.)"}, {"source": "True / False", "number": "87", "prompt": "Dan Ariely is a highly regarded behavioral economist. In his TED talk, he concluded that people in some countries do not participate in organ donation programs because they simply do not care about others. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False (Actually due to the default registration form design - default option)."}, {"source": "True / False", "number": "88", "prompt": "For a person with loss aversion, an additional gain provides less utility than a loss of the same size subtracted from it. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct (Loss aversion)."}, {"source": "True / False", "number": "89", "prompt": "I was offered a bet in which I paid $10 to predict whether a coin tossed would come up heads or tails. If I predict correctly, I get $15, and if I don't, I get nothing. If I were risk-averse, I would never make this bet. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "90", "prompt": "In Prospect Theory, low probabilities are assigned relatively higher (exaggerated) weights than moderately or highly likely events. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "98", "prompt": "Risk that cannot be diversified away by combining assets in a portfolio is called market risk. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "101", "prompt": "An important trading rule involves earnings announcements. The phenomenon of post-earnings announcement drift and the market reaction to extremely high or low earnings announcements is very slow. True or false: to profit from this phenomenon, I would sell when a company announces positive earnings news and buy when there is negative news?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False."}, {"source": "True / False", "number": "109", "prompt": "People are generally less comfortable in an uncertain or ambiguous situation than in a risky situation. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct (Ambiguity aversion)."}, {"source": "True / False", "number": "111", "prompt": "Researchers report short-term reversals in returns, whereby winners become losers and vice versa. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "116", "prompt": "The Evaluability Hypothesis states that people are sometimes influenced by easily evaluable characteristics instead of more important characteristics. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct"}, {"source": "True / False", "number": "118", "prompt": "We watched a short documentary by NBR about investor overconfidence. In the film, it is reported that most individual investors expect their returns to exceed the market return. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct"}, {"source": "True / False", "number": "120", "prompt": "A Fortune survey of senior executives found that they believe large companies and good growth companies are excellent investment opportunities. True or False: Is the empirical evidence discussed consistent with the beliefs of these executives?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False (small company stocks and value stocks have better historical performance)."}, {"source": "True / False", "number": "122", "prompt": "A plausible explanation for home bias is the presence of an information advantage. Consistent with this, some empirical evidence suggests that fund managers earn higher returns from \"local\" investments (companies located near their headquarters). True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct"}, {"source": "True / False", "number": "129", "prompt": "In \"future-neutral\" languages ​​(like Chinese), present and future tense are expressed grammatically the same way. In his TED talk, economist Keith Chen argues that this linguistic structure significantly influences future-oriented behavior (like motivating people to save more). True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct"}, {"source": "True / False", "number": "131", "prompt": "Mark lives in Arkansas, owns a small chain of computer stores, and is heavily invested in Walmart stock (based in Arkansas). Almost every night, local television reports on Walmart. Mark also often shops here and feels he is very knowledgeable about this stock. True or False: Is Mark's investment strategy focusing on Walmart reasonable and appropriate?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False (because this is a manifestation of diversification error due to familiarity bias and the salience of local information)."}, {"source": "True / False", "number": "132", "prompt": "Our brains automatically and unconsciously look for patterns. A typical example is the \"Stroop Effect\". When a word's meaning conflicts with its display color (for example, the word \"Red\" is written in Blue), it interferes with the brain's ability to process, causing delays and errors. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct"}, {"source": "True / False", "number": "134", "prompt": "Professional financial analysts tend to issue more BUY recommendations than SELL recommendations. True or False: Reasons for this phenomenon include conflict of interest and overoptimism?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct"}, {"source": "True / False", "number": "138", "prompt": "In the PBS documentary \"Dot Con,\" it is argued that financial analysts strive to provide the best and most objective information to investors. True or False: The actual behavior of analysts in movies is not always consistent with this goal?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct (due to pressure of conflicts of interest and underwriting fees of investment banks)."}, {"source": "True / False", "number": "142", "prompt": "Herding behavior of investors in the financial market is never rational. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False (because sometimes herding behavior is informationally rational when the cost of searching for information yourself is too high - rational herding)."}, {"source": "True / False", "number": "143", "prompt": "In the documentary \"Dishonesty: The Truth About Lies,\" Dan Ariely reports that most people will lie a little about the number of problems they solve correctly in a math game (The Matrix Experiment). True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Yes (most people cheat a little but within the limits of personal pride)."}, {"source": "True / False", "number": "149", "prompt": "The optimal board size depends on the characteristics of each company. True or False: In general, is excluding outside independent directors (outsiders) from the board of directors a good idea?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False (independent outside members help objectively monitor and better protect shareholders)."}, {"source": "True / False", "number": "157", "prompt": "The goal of the \"Save More Tomorrow\" program (SMarT program) is to persuade employees to commit to automatically increasing their future retirement savings contribution rate every time they receive a raise. True or False: Empirical studies show that this program is very successful in increasing workers' real savings rate?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct"}, {"source": "True / False", "number": "158", "prompt": "Over the long term (at long horizons), bonds almost always outperform stocks. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False (In the long term, stocks have a higher rate of return than bonds to compensate for volatility risk)."}, {"source": "True / False", "number": "159", "prompt": "In a defined contribution retirement plan (DC plan), both the employee and the employer contribute to an individual account whose cumulative value depends on additional contributions and investment returns. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "161", "prompt": "Intraday volatility in the United States has tended to increase in recent decades. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "166", "prompt": "Professor Robert Shiller of Yale University periodically conducts surveys of institutional and individual investors to gauge the level of confidence in the market. True or False: Market confidence is at an all-time high today?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False."}, {"source": "True / False", "number": "169", "prompt": "The CBOE Volatility Index (VIX) is often called the \"investor fear gauge\". True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "170", "prompt": "The equity risk premium is the additional return that investors require to compensate for the risk of investing in stocks instead of risk-free assets. True or False?", "choices": {"A": "True", "B": "False"}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct."}, {"source": "True / False", "number": "171", "prompt": "We often use the P/E (price/earnings) ratio as a measure to evaluate stock market valuations. True or False: Today, market overvaluation is at an all-time low?", "choices": {"A": "True", "B": "False"}, "correct_key": "B", "correct_keys": ["B"], "explanation": "False."}, {"source": "Short Answer", "number": "45", "prompt": "In 1984, AT&T telecommunications corporation was forced to split into 7 regional telephone companies (Baby Bells). At the time, your aunt lived in Atlanta, was a manager at the company, and was optimistic about the future. She transferred all her investments from AT&T stock to BellSouth (her regional company). Based on your Behavioral Finance (BF) knowledge, what advice would you give her?", "choices": {"A": "I advise you to invest entirely in BellSouth because she has inside information as a manager.", "B": "I advise you to sell BellSouth and buy AT&T because larger companies are always safer in the long run.", "C": "I advise you to split capital equally among all 7 Baby Bells to eliminate all unsystematic and systematic risks.", "D": "I advise you not to put all your investment capital into BellSouth (because this violates the principle of diversification and shows bias towards hometown/familiarity)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: I advise you not to put all your investment capital into BellSouth (because this violates the principle of diversification and shows bias towards hometown/familiarity).."}, {"source": "Short Answer", "number": "85", "prompt": "When are financial markets efficient?", "choices": {"A": "When transaction costs are zero and all investors are rational.", "B": "When stock prices follow a predictable pattern based on historical trends.", "C": "When stock prices react quickly and accurately to new information.", "D": "When regulators prevent any speculative bubbles from forming."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: When stock prices react quickly and accurately to new information.."}, {"source": "Short Answer", "number": "86", "prompt": "Consider a person with the following value function according to prospect theory: $v(w) = w^{1/2}$ if $w \\ge 0$, $v(w) = -4(-w)^{1/2}$ if $w < 0$. Where $w$ is wealth. Does this person have loss aversion?", "choices": {"A": "NO (Because the utility function is concave in both gain and loss domains).", "B": "NO (Because the person is risk-averse in the profit region and risk-seeking in the loss region).", "C": "YES (But only because the function is S-shaped, not because of the slope coefficient).", "D": "YES (Because the slope of the value function in the loss region is 4 times higher than in the profit region)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: YES (Because the slope of the value function in the loss region is 4 times higher than in the profit region).."}, {"source": "Short Answer", "number": "91", "prompt": "Lauren's utility function is $u(w) = e^w$, where $w$ is wealth (units $100,000$). She is considering two prospects $P_1(0.50, \\$20,000, \\$100,000)$ and $P_2(0.01, \\$500,000, 0)$. Which option will she choose if she wants to maximize expected utility?", "choices": {"A": "Prospect $P_2$.", "B": "She is indifferent between $P_1$ and $P_2$.", "C": "Prospect $P_1$.", "D": "She will choose neither prospect because she is risk-neutral."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Prospect $P_1$.."}, {"source": "Short Answer", "number": "92", "prompt": "Laurie Santos researches issues in human and primate psychology. We watched a TED video in class where Laurie Santos described her research on monkeynomics. Which statement best reflects her findings?", "choices": {"A": "Capuchin monkeys are perfectly rational traders when introduced to a token economy.", "B": "Monkeys do not show loss aversion because they do not understand fiat currency.", "C": "Primates also have predictable irrational behaviors similar to humans.", "D": "Monkeys are risk-averse in the loss domain and risk-seeking in the profit domain."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Primates also have predictable irrational behaviors similar to humans.."}, {"source": "Short Answer", "number": "93", "prompt": "Prospects $A$ and $B$ have the same expected value ($-\\$5,000$). According to prospect theory, which prospect is preferred? Prospect $A$: $P(0.50, -\\$10,000, 0)$; Outlook $B$: $P(0.20, -\\$25,000, 0)$", "choices": {"A": "Prospect $A$ (Because humans are risk-averse in the loss domain and prefer smaller, more certain losses).", "B": "Prospect $A$ (Because they are indifferent, as both prospects have the same expected value).", "C": "Neither prospect is acceptable because loss aversion makes both look too painful.", "D": "Outlook $B$ (Because humans seek risk in the loss domain, preferring the probability of large losses but less likelihood)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: Outlook $B$ (Because humans seek risk in the loss domain, preferring the probability of large losses but less likelihood).."}, {"source": "Short Answer", "number": "94", "prompt": "What is the model developed by Kahneman and Tversky based on observing actual decision-making behavior under conditions of risk?", "choices": {"A": "Expected Utility Theory.", "B": "Prospect Theory.", "C": "Efficient Market Hypothesis.", "D": "Capital Asset Pricing Model."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Prospect Theory.."}, {"source": "Short Answer", "number": "95", "prompt": "....... is a situation when you know possible outcomes in advance and can assign probabilities to those outcomes.", "choices": {"A": "Risk.", "B": "Ambiguity.", "C": "Uncertainty.", "D": "Certainty."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Risk.."}, {"source": "Short Answer", "number": "96", "prompt": "What is the set of portfolios that maximize expected returns for a given level of risk called?", "choices": {"A": "Capital allocation line.", "B": "Efficient frontier.", "C": "Security market line.", "D": "Utility curve."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Efficient frontier.."}, {"source": "Short Answer", "number": "97", "prompt": "The joint hypothesis problem refers to the fact that market efficiency tests test two hypotheses simultaneously. What are those two hypotheses?", "choices": {"A": "Investor rationality and arbitrage limits.", "B": "Fundamental risk and noise trader risk.", "C": "Market liquidity and low transaction costs.", "D": "Efficient markets and appropriate expected return models (like CAPM)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: Efficient markets and appropriate expected return models (like CAPM).."}, {"source": "Short Answer", "number": "99", "prompt": "We watched \"Mind over money\", a documentary by NOVA. What was discussed in this documentary?", "choices": {"A": "Traditional finance models are perfectly adequate for explaining the 2008 financial crisis.", "B": "Emotions and psychology play an important role in explaining the choices people make.", "C": "The Chicago School of economics has proven that human psychology does not affect asset pricing.", "D": "Computers and algorithmic trading have eliminated all behavioral biases from the stock market."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Emotions and psychology play an important role in explaining the choices people make.."}, {"source": "Short Answer", "number": "100", "prompt": "Which of the following is NOT an important assumption/tenet of Prospect Theory?", "choices": {"A": "Completeness - this is the axiom of EUT Expected Utility Theory.", "B": "Loss aversion.", "C": "Value function defined over changes in wealth relative to a reference point.", "D": "Non-linear probability weighting (overweighting low probabilities)."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Completeness - this is the axiom of EUT Expected Utility Theory.."}, {"source": "Short Answer", "number": "102", "prompt": "A market can be efficient as long as what condition is met?", "choices": {"A": "Every single investor has access to perfect inside information.", "B": "Short selling is completely prohibited to prevent speculative bubbles.", "C": "The government actively regulates trading volume and prices.", "D": "All traders are rational; Arbitrage is not limited; or the mistakes that investors make are independent and cancel each other out (not correlated)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: All traders are rational; Arbitrage is not limited; or the mistakes that investors make are independent and cancel each other out (not correlated).."}, {"source": "Short Answer", "number": "103", "prompt": "Some cognitive distortions are related to the typical situation heuristic (representativeness). One would argue that the dramatic evidence is convincing. What is this deviation called?", "choices": {"A": "Conservatism.", "B": "Overconfidence.", "C": "Salience.", "D": "Mental accounting."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Salience.."}, {"source": "Short Answer", "number": "104", "prompt": "Arbitrageurs attempt to generate profits by trading based on mispricing in asset markets. What limits that arbitrage potential?", "choices": {"A": "Perfect information symmetry and absolute investor rationality.", "B": "Transaction costs (including bid-ask spread), short selling restrictions, fundamental risk and noise trader risk.", "C": "The presence of high-speed trading algorithms and low interest rates.", "D": "Government subsidies and fixed exchange rate regimes."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Transaction costs (including bid-ask spread), short selling restrictions, fundamental risk and noise trader risk.."}, {"source": "Short Answer", "number": "105", "prompt": "Daniel has an MBA from Wharton and is a successful investment banker on Wall Street. Amanda does not have a college degree and is a struggling artist. Who do you guess is more overconfident about the performance of their stock portfolio?", "choices": {"A": "Amanda.", "B": "Both are equally overconfident because overconfidence is universal.", "C": "Daniel.", "D": "Neither is overconfident because professionals and artists evaluate portfolios objectively."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Daniel.."}, {"source": "Short Answer", "number": "106", "prompt": "I flipped a coin three times and got heads all three times. I think it is very likely that heads will continue to appear on the next toss. What deviation is this?", "choices": {"A": "Hot hand fallacy.", "B": "Gambler's fallacy.", "C": "Availability bias.", "D": "Anchoring bias."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Hot hand fallacy.."}, {"source": "Short Answer", "number": "107", "prompt": "If people are always overconfident, why don't they learn from it? What psychology could it be due to?", "choices": {"A": "Loss aversion, regret avoidance, and status quo bias.", "B": "Confirmation bias, self-attribution bias, and hindsight bias.", "C": "Hyperbolic discounting, mental accounting, and availability bias.", "D": "Representativeness heuristic, framing, and Stroop effect."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Confirmation bias, self-attribution bias, and hindsight bias.."}, {"source": "Short Answer", "number": "108", "prompt": "In a public value auction with incomplete information, people often overbid for assets (for example, in a corporate takeover). Which of the following factors could explain the \"winner's curse\"?", "choices": {"A": "Loss aversion.", "B": "Status quo bias.", "C": "Regret avoidance.", "D": "Overconfidence."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: Overconfidence.."}, {"source": "Short Answer", "number": "110", "prompt": "People often value the things they own more than they are willing to spend to buy them. What is this phenomenon called?", "choices": {"A": "Endowment effect.", "B": "Disposition effect.", "C": "Sunk cost fallacy.", "D": "Mental accounting."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Endowment effect.."}, {"source": "Short Answer", "number": "112", "prompt": "Ryan completed a survey using the confidence interval method. He was asked to construct a 90% confidence interval for the questions. Of the survey's 20 questions, Ryan's confidence interval covers a correct answer 15 times. We conclude that Ryan has what characteristics?", "choices": {"A": "Underconfidence (Underconfident).", "B": "Perfect calibration (Well-calibrated).", "C": "Overconfidence (Overconfident).", "D": "Risk-averse behavior."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Overconfidence (Overconfident).."}, {"source": "Short Answer", "number": "113", "prompt": "________ is a correlated opinion of value unrelated to fundamental information but that moves the market.", "choices": {"A": "Fundamental value.", "B": "Investor sentiment (sentiment).", "C": "Noise trader risk.", "D": "Intrinsic bubble."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Investor sentiment (sentiment).."}, {"source": "Short Answer", "number": "114", "prompt": "Sometimes people hold two psychologically inconsistent thoughts. What is this called?", "choices": {"A": "Mental accounting.", "B": "Representativeness heuristic.", "C": "Status quo bias.", "D": "Cognitive dissonance."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: Cognitive dissonance.."}, {"source": "Short Answer", "number": "115", "prompt": "Sometimes people seem anchored in old information and other times they seem influenced by the newest information. One way to explain this behavior is to say that humans are capable of:", "choices": {"A": "Oarsely calibrated.", "B": "Perfect rational updating.", "C": "Consistent risk preferences.", "D": "Absolute loss aversion."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Oarsely calibrated.."}, {"source": "Short Answer", "number": "117", "prompt": "What is the practice of buying and selling securities simultaneously to lock in risk-free profits called?", "choices": {"A": "Hedging.", "B": "Short selling.", "C": "Arbitrage trading.", "D": "Speculative trading."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Arbitrage trading.."}, {"source": "Short Answer", "number": "119", "prompt": "about conjunction fallacy: Between the following two statements, which statement is more likely to occur? (1) Mallory is very good at picking winning stocks; or (2) Mallory is a banker and is very good at picking winning stocks.", "choices": {"A": "Statement (2) (Because Mallory being a banker provides essential context that makes her stock-picking skills more plausible).", "B": "Both statements are equally likely to occur because they describe the same core ability.", "C": "Statement (1) (A single statement always has a higher probability than or equal to a linked statement).", "D": "Neither statement is likely because stock picking is purely random."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Statement (1) (A single statement always has a higher probability than or equal to a linked statement).."}, {"source": "Short Answer", "number": "121", "prompt": "A 19th-century railroad construction foreman survived a terrible accident in which an iron bar penetrated his skull, becoming an important case study for scientists studying the brain and behavior. Who are you?", "choices": {"A": "Dan Ariely.", "B": "Keith Chen.", "C": "Phineas Gage.", "D": "Antonio Damasio."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Phineas Gage.."}, {"source": "Short Answer", "number": "123", "prompt": "A study followed traders for 80 days regarding their emotional state and trading results. The researchers reported a significant correlation between market events and their cardiovascular data. What are the lessons learned from this study?", "choices": {"A": "Traders should strive to maintain a balanced emotional response (avoid over-emotional reactions).", "B": "Traders should rely entirely on their emotional gut feelings to make rapid trades.", "C": "Traders should take testosterone supplements to increase their risk tolerance.", "D": "Cardiovascular fluctuations are purely physical and have no impact on trading performance."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Traders should strive to maintain a balanced emotional response (avoid over-emotional reactions).."}, {"source": "Short Answer", "number": "124", "prompt": "Antonio Damasio studied patients with brain damage (in the area responsible for emotions) to better understand the human brain. From your research, what conclusions do you draw about the role of emotions in decision making?", "choices": {"A": "Decision-making becomes perfectly rational and error-free when emotions are eliminated.", "B": "Patients with brain damage trade more efficiently because they do not feel loss aversion.", "C": "Emotions have no impact on cognitive decision-making, which is handled in a separate region.", "D": "Decision-making can be seriously impaired or difficult if it lacks emotional factors (Decision-making is impaired without emotion)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: Decision-making can be seriously impaired or difficult if it lacks emotional factors (Decision-making is impaired without emotion).."}, {"source": "Short Answer", "number": "125", "prompt": "According to an Australian television program, some behavioral researchers (such as Dr. John Coates) believe that higher testosterone levels increase traders' confidence, leading to what behavior?", "choices": {"A": "Become highly risk-averse.", "B": "Accept more risk (Risk-taking behavior).", "C": "Trade less frequently and hold cash.", "D": "Evaluate their portfolio performance more objectively."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Accept more risk (Risk-taking behavior).."}, {"source": "Short Answer", "number": "126", "prompt": "Barber and Odean examined the trading histories of more than 60,000 individual investors during the 1990s. What is the most accurate conclusion from this study?", "choices": {"A": "After deducting trading costs and adjusting for risk, investors who trade most often have the worst returns (most trading = worst performance).", "B": "Investors who trade most frequently earn the highest returns due to capture of short-term anomalies.", "C": "There is no significant relationship between trading frequency and net returns.", "D": "Female investors trade more frequently and suffer worse returns than male investors."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: After deducting trading costs and adjusting for risk, investors who trade most often have the worst returns (most trading = worst performance).."}, {"source": "Short Answer", "number": "127", "prompt": "For what reason might emotions improve decision making?", "choices": {"A": "It allows people to calculate complex mathematical probabilities faster.", "B": "It eliminates cognitive biases like anchoring and representativeness.", "C": "It helps motivate and direct people to make quick decisions in important situations.", "D": "It forces investors to adhere strictly to long-term passive strategies."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: It helps motivate and direct people to make quick decisions in important situations.."}, {"source": "Short Answer", "number": "130", "prompt": "Philosopher Jon Elster describes six observable characteristics that help us identify an emotion. Which of the following is NOT part of this list of important characteristics?", "choices": {"A": "Cognitive appraisal.", "B": "Physiological arousal.", "C": "Familiarity.", "D": "Action tendencies."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Familiarity.."}, {"source": "Short Answer", "number": "133", "prompt": "People often make decisions based on anticipatory emotions. Who is a typical example of this phenomenon?", "choices": {"A": "Brent doubles his bet immediately after winning $100,000 to maximize his excitement.", "B": "Athena continues to hold a losing stock even though it is performing very poorly (to avoid facing the regret of selling at a loss).", "C": "Daniel allocates retirement savings equally among all available mutual funds.", "D": "Ryan sets a very narrow confidence interval when predicting stock prices."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Athena continues to hold a losing stock even though it is performing very poorly (to avoid facing the regret of selling at a loss).."}, {"source": "Short Answer", "number": "135", "prompt": "What does research on how employees manage their personal investments show?", "choices": {"A": "Most of them are momentum chasers.", "B": "Most of them are value investors.", "C": "Most of them strictly follow the CAPM model.", "D": "Most of them actively rebalance their portfolios weekly."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Most of them are momentum chasers.."}, {"source": "Short Answer", "number": "136", "prompt": "What is the greatest evolutionary advantage of the human brain over other vertebrates?", "choices": {"A": "The ability to plan for the future (Planning capacity).", "B": "The ability to react instantly to visual stimuli.", "C": "The ability to store large quantities of spatial maps.", "D": "The ability to digest complex raw proteins."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: The ability to plan for the future (Planning capacity).."}, {"source": "Short Answer", "number": "137", "prompt": "One of your customers believes that \"a good company is definitely a good investment.\" What cognitive distortion explains this belief?", "choices": {"A": "Availability heuristic.", "B": "Typical situation heuristic / Representativeness heuristic.", "C": "Anchoring and adjustment.", "D": "Familiarity bias."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Typical situation heuristic / Representativeness heuristic.."}, {"source": "Short Answer", "number": "139", "prompt": "The concept of \"Homo economicus\" assumes that humans always maintain absolute rationality and only self-interest. However, empirical studies show that most people have \"social preferences\". What does this imply?", "choices": {"A": "People genuinely care about the welfare and interests of others (altruism, fairness).", "B": "People are purely selfish but behave kindly only when watched by others.", "C": "People will always choose the option that maximizes their personal financial payoff.", "D": "Social preferences are temporary anomalies that disappear in high-stakes markets."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: People genuinely care about the welfare and interests of others (altruism, fairness).."}, {"source": "Short Answer", "number": "140", "prompt": "What is a corporate board of directors whose members have concurrent positions in other companies called?", "choices": {"A": "Staggered boards.", "B": "Interlocking directorates.", "C": "Stewardship councils.", "D": "Supervisory networks."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Interlocking directorates.."}, {"source": "Short Answer", "number": "141", "prompt": "In Solomon Asch's classic experiment, students were asked to compare the lengths of line segments within a group. Which of the following experimental results is correct?", "choices": {"A": "Students always give the correct answer regardless of the group's opinion.", "B": "Over 90% of students refuse to participate when they realize others are lying.", "C": "Although the correct answer is extremely obvious, students often conform to the biased opinion of the majority in the group (peer pressure / conformity effect).", "D": "The presence of authority figures is the only factor that causes students to lie."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Although the correct answer is extremely obvious, students often conform to the biased opinion of the majority in the group (peer pressure / conformity effect).."}, {"source": "Short Answer", "number": "144", "prompt": "In the Ultimatum Game, two anonymous players interact with each other. The proposer is given a sum of money and decides how much to share with the responder. The responder can accept or decline. If you refuse, you both get nothing. Which of the following statements is true about this game?", "choices": {"A": "(1) Normative game theory predicts the responder will reject low offers; (2) In reality, responders accept any positive amount because they are purely rational.", "B": "(1) The proposer always keeps 90% and the responder always accepts; (2) In reality, players split 50/50 only when they are close friends.", "C": "(1) The responder has no power in the game; (2) In reality, the responder can steal the money if they are dissatisfied.", "D": "(1) Normative game theory predicts the responder will accept any offer greater than zero; (2) In reality, people are not completely selfish, proposers often give fair shares and responders often refuse offers that are too low (to punish injustice)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: (1) Normative game theory predicts the responder will accept any offer greater than zero; (2) In reality, people are not completely selfish, proposers often give fair shares and responders often refuse offers that are too low (to punish injustice).."}, {"source": "Short Answer", "number": "145", "prompt": "Before the energy corporation Enron collapsed and went bankrupt, most professional financial analysts maintained bullish recommendations on the company. Why?", "choices": {"A": "The analysts wanted to ensure their firm continued to earn large investment banking fees from Enron, they wanted to maintain a good relationship with Enron management, and they blindly trusted the numbers/forecasts provided by Enron management.", "B": "Enron had the strongest balance sheet in the energy sector, and their accounting practices were praised by the SEC.", "C": "The analysts were threatened by Enron executives with legal action if they downgraded the stock.", "D": "Traditional market models predicted that oil and gas prices would double, making Enron highly profitable."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: The analysts wanted to ensure their firm continued to earn large investment banking fees from Enron, they wanted to maintain a good relationship with Enron management, and they blindly trusted the numbers/forecasts provided by Enron management.."}, {"source": "Short Answer", "number": "146", "prompt": "Stanley Milgram's experiments on obedience are world famous for their shocking results. Which of the following statements is true about Milgram's experimental results?", "choices": {"A": "Almost all participants refused to press the electric shock button once they heard the learner cry out in pain.", "B": "Many participants were willing to press the electric shock button at a level dangerous to others when given an order by someone in authority, and they explained that behavior by following orders from superiors (obedience to authority).", "C": "The experiment proved that people are inherently sadistic and enjoy causing pain to others.", "D": "Only participants with low levels of education were willing to obey the dangerous orders."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Many participants were willing to press the electric shock button at a level dangerous to others when given an order by someone in authority, and they explained that behavior by following orders from superiors (obedience to authority).."}, {"source": "Short Answer", "number": "147", "prompt": "The disposition effect can be explained by what factors?", "choices": {"A": "Transaction costs and capital gains tax rules.", "B": "Human emotions (fear of regret and search for pride).", "C": "The belief that stock prices follow a random walk.", "D": "The desire to diversify portfolios to reduce unsystematic risk."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Human emotions (fear of regret and search for pride).."}, {"source": "Short Answer", "number": "148", "prompt": "The largest Ponzi financial fraud in US history was carried out by a reputable investment writer, the former president of the NASDAQ stock exchange. Who are you?", "choices": {"A": "Kenneth Lay.", "B": "Bernie Madoff.", "C": "Charles Ponzi.", "D": "Richard Scrushy."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Bernie Madoff.."}, {"source": "Short Answer", "number": "150", "prompt": "To the outside world, it appeared that the board of directors at Enron rubber-stamped every decision presented. This comes as a big surprise because:", "choices": {"A": "It's a large board, many of them are independent outside directors, and they're very well paid.", "B": "It's a small board, completely composed of inside managers, and they receive no compensation.", "C": "The board members were all close personal friends of the auditor Arthur Andersen.", "D": "The board held daily meetings and hired independent investigators for every transaction."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: It's a large board, many of them are independent outside directors, and they're very well paid.."}, {"source": "Short Answer", "number": "151", "prompt": "Unlike Brent, Andrew just lost $100,000 in Las Vegas. Immediately, he doubled his bet to play bigger hands than before. Here is an example of:`", "choices": {"A": "House-money effect.", "B": "Snake-bite effect.", "C": "Break-even effect - trying to recover after suffering a loss.", "D": "Endowment effect."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Break-even effect - trying to recover after suffering a loss.."}, {"source": "Short Answer", "number": "152", "prompt": "Which of the following statements is correct when comparing the emotions of regret and disappointment?", "choices": {"A": "Regret is a stronger emotion than disappointment (because regret comes with a feeling of self-blame caused by one's own actions).", "B": "Disappointment is stronger than regret because it involves external bad luck beyond one's control.", "C": "Regret and disappointment are identical emotions in both intensity and psychological triggers.", "D": "Regret only occurs when decisions lead to a positive outcome that was lower than expected."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Regret is a stronger emotion than disappointment (because regret comes with a feeling of self-blame caused by one's own actions).."}, {"source": "Short Answer", "number": "153", "prompt": "Which organization serves as the primary provider of internal oversight and disciplinary mechanisms for corporate executives?", "choices": {"A": "Securities and Exchange Commission (SEC).", "B": "Board of directors of the company (Board of directors).", "C": "Federal Trade Commission (FTC).", "D": "Shareholder Protection Association."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Board of directors of the company (Board of directors).."}, {"source": "Short Answer", "number": "154", "prompt": "Your aunt is upset because she lost a lot of money in the stock market after the recent financial crisis. She is now worried about reinvesting in stocks and decided to transfer all her money to safe channels such as certificates of deposit. This is a manifestation of what psychological phenomenon?", "choices": {"A": "House-money effect.", "B": "Break-even effect.", "C": "Snake-bite effect - becoming extremely risk-averse after having suffered a large loss previously.", "D": "Disposition effect."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Snake-bite effect - becoming extremely risk-averse after having suffered a large loss previously.."}, {"source": "Short Answer", "number": "155", "prompt": "Your friend, Brent, just won $100,000 in Las Vegas. Soon he decided to double the bet and refused to leave the casino. Here is an example of:", "choices": {"A": "Break-even effect.", "B": "House-money effect (House-money effect - accepting higher risks when on the verge of winning with house-money).", "C": "Snake-bite effect.", "D": "Endowment effect."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: House-money effect (House-money effect - accepting higher risks when on the verge of winning with house-money).."}, {"source": "Short Answer", "number": "156", "prompt": "A famous behavioral explanation for the equity premium puzzle is called \"myopic loss aversion.\" Investors with this characteristic will:", "choices": {"A": "Have very high loss aversion and regularly evaluate their asset portfolio position with too short-term frequency (about once a year).", "B": "Have very low loss aversion and evaluate their portfolio position only at retirement.", "C": "Evaluate their portfolio daily and buy index funds to minimize transaction costs.", "D": "Only trade value stocks and ignore all short-term market fluctuations."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Have very high loss aversion and regularly evaluate their asset portfolio position with too short-term frequency (about once a year).."}, {"source": "Short Answer", "number": "160", "prompt": "In experimental bubble markets, participants trade assets that have a fixed life cycle. We often observe prices rising well above the fundamental value and collapsing near the end of the trading session. Which of the following statements is FALSE about this market?", "choices": {"A": "Prices often rise well above the fundamental value.", "B": "Prices collapse near the end of the trading session.", "C": "Bubbles occur even when participants are experienced traders.", "D": "Bubbles are not affected by the ability to short sell assets (In fact, the ability to short sell can limit bubbles from arising)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: Bubbles are not affected by the ability to short sell assets (In fact, the ability to short sell can limit bubbles from arising).."}, {"source": "Short Answer", "number": "162", "prompt": "Many people do not save enough money for their retirement. What psychological reasons explain this phenomenon?", "choices": {"A": "High tax rates, lack of available mutual funds, and snake-bite effect.", "B": "Self-control limits, status-quo bias and hyperbolic discounting.", "C": "Overconfidence, hot hand fallacy, and gambler's fallacy.", "D": "Familiarity bias, cognitive dissonance, and Stroop effect."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Self-control limits, status-quo bias and hyperbolic discounting.."}, {"source": "Short Answer", "number": "163", "prompt": "A famous market puzzle is the discovery that stock prices fluctuate too much compared to the expected volatility from the present value of future dividend streams. What is this phenomenon called?", "choices": {"A": "Equity premium puzzle.", "B": "Market efficiency anomaly.", "C": "Excess volatility.", "D": "Myopic loss aversion."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Excess volatility.."}, {"source": "Short Answer", "number": "164", "prompt": "naires are often used to assess a customer's risk tolerance. One problem, however, is that when a question is worded slightly differently, customers will change their answer. In what aspect is this a problem?", "choices": {"A": "Questionnaire reliability.", "B": "Questionnaire validity.", "C": "Questionnaire simplicity.", "D": "Questionnaire structure."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: Questionnaire reliability.."}, {"source": "Short Answer", "number": "165", "prompt": "Risk tolerance is a function of financial risk capacity and psychological attitude towards risk. How is this level of risk tolerance defined?", "choices": {"A": "Is the maximum amount of money an investor can lose without going bankrupt.", "B": "Is the appropriate level of risk for a normal person with similar characteristics (age, income, circumstances).", "C": "Is the rate of return required to beat inflation over a ten-year horizon.", "D": "Is the subjective level of excitement felt when trading speculative stocks."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Is the appropriate level of risk for a normal person with similar characteristics (age, income, circumstances).."}, {"source": "Short Answer", "number": "167", "prompt": "Sam started working at his company 20 years ago when he was 22 years old. At that time, he opened a retirement savings account and allocated 80% of his capital to a stock fund and 20% to a bond fund. Since then, this allocation has not changed at all. What's the big deal with this passive attribution method?", "choices": {"A": "Passive investing is always superior, so he should never rebalance or change his contribution rate.", "B": "He should have allocated 100% to stocks since stocks always beat bonds in any 20-year window.", "C": "If he really wants to maintain the same level of risk as before, he needs to rebalance the portfolio as the value of savings funds changes over time, instead of keeping the contribution rate constant (inertia/current state bias).", "D": "The bond portion of his portfolio has completely defaulted, leaving him with only stock funds."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: If he really wants to maintain the same level of risk as before, he needs to rebalance the portfolio as the value of savings funds changes over time, instead of keeping the contribution rate constant (inertia/current state bias).."}, {"source": "Short Answer", "number": "168", "prompt": "The Flash Crash of 2010 led to the imposition of new transaction limits (circuit breakers) in the United States. What is the nature of this incident?", "choices": {"A": "Was a gradual decline in stock prices over several months triggered by high inflation.", "B": "Is the disruption of the US financial market that occurred extremely rapidly in 2010 without stemming from any changes in fundamental macroeconomic factors (fundamentals).", "C": "Was a market crash caused by the bankruptcy of Lehman Brothers and Bear Stearns.", "D": "Was a planned market correction implemented by the Federal Reserve to cool down the economy."}, "correct_key": "B", "correct_keys": ["B"], "explanation": "Correct Answer: Is the disruption of the US financial market that occurred extremely rapidly in 2010 without stemming from any changes in fundamental macroeconomic factors (fundamentals).."}, {"source": "Short Answer", "number": "172", "prompt": "When allocating a retirement portfolio, some people seem to ignore the risk structure of the funds and instead spread the money out based on the number of funds available in the menu of options. This behavior represents the use of which heuristic rule?", "choices": {"A": "Status-quo bias.", "B": "Myopic loss aversion.", "C": "Equal division heuristic rule $1/n$ (1/n heuristic).", "D": "Mental accounting."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Equal division heuristic rule $1/n$ (1/n heuristic).."}, {"source": "Short Answer", "number": "173", "prompt": "Which of the following statements is FALSE regarding financial planning for retirement?", "choices": {"A": "To ensure you reach your retirement goals, advisors recommend that you only accumulate a total of 5 times your desired annual income when you retire (This is too low, in reality you need more).", "B": "Defined contribution plans transfer the investment risk to the employee.", "C": "Compounding interest makes early savings significantly more valuable.", "D": "Advisors recommend estimating post-retirement expenses as a percentage of pre-retirement income."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: To ensure you reach your retirement goals, advisors recommend that you only accumulate a total of 5 times your desired annual income when you retire (This is too low, in reality you need more).."}, {"source": "Short Answer", "number": "174", "prompt": "Which of the following is NOT a benefit of a defined benefit retirement plan (DB plan)?", "choices": {"A": "Guaranteed lifetime monthly benefits.", "B": "Elimination of investment risk for the worker.", "C": "Portability / flexibility to change companies (Portability).", "D": "Employer bears all the funding and management responsibility."}, "correct_key": "C", "correct_keys": ["C"], "explanation": "Correct Answer: Portability / flexibility to change companies (Portability).."}, {"source": "Short Answer", "number": "229", "prompt": "Distinguish between misestimation and over-optimism. Note: Please express in your own words based on your understanding.", "choices": {"A": "- *Miscalibration:* Is overestimating the likelihood of positive events. - *Overoptimism:* Is writing down confidence intervals that are too wide.", "B": "- *Miscalibration:* Is a form of regret avoidance. - *Overoptimism:* Is a form of status-quo bias that prevents portfolio rebalancing.", "C": "- *Miscalibration:* Is evaluating portfolio returns daily. - *Overoptimism:* Is believing that you have no control over market events.", "D": "- *Miscalibration:* Is the tendency to exaggerate the accuracy of knowledge or information that one possesses (for example, giving a confidence interval that is too narrow). - *Overoptimism:* Is the tendency to overestimate the probability of positive events and underestimate the probability of negative events happening to yourself, or to believe that you have greater control over a situation than you actually have (illusion of control)."}, "correct_key": "D", "correct_keys": ["D"], "explanation": "Correct Answer: - *Miscalibration:* Is the tendency to exaggerate the accuracy of knowledge or information that one possesses (for example, giving a confidence interval that is too narrow). - *Overoptimism:* Is the tendency to overestimate the probability of positive events and underestimate the probability of negative events happening to yourself, or to believe that you have greater control over a situation than you actually have (illusion of control).."}, {"source": "Short Answer", "number": "230", "prompt": "In the customer survey that a financial company regularly asks its customers (investors) to complete from the beginning, there is a section assessing customers' attitudes toward risk. This includes a question regarding which investment portfolio the customer is most likely to invest in. In a list of given portfolios, each category will have information about the rate of return corresponding to the possibility of profit and loss. The common tendency is for customers to choose an investment portfolio that \"either profits 25% or loses 10%\". This risk attitude behavior is most closely related to which concept you have learned so far in the Behavioral Finance module? Please explain briefly. *Note: Your answer should not exceed 100 words.*", "choices": {"A": "- This behavior demonstrates the concept **Loss Aversion** of Kahneman and Tversky's Prospect Theory. - Accordingly, people are afraid of losses that are about 2 to 2.5 times greater than profits of the same size. Therefore, to accept the risk of a potential loss of 10%, investors require a minimum expected return of 25% (equivalent to a ratio of 2.5:1) to feel psychologically satisfied to make the investment.", "B": "- This behavior demonstrates the **Break-even Effect** where investors try to recover previous Vegas losses. - Proposers split gains 50/50.", "C": "- This behavior demonstrates the **Status-quo Bias** where Sam keeps the 80/20 stock/bond allocation unchanged for 20 years.", "D": "- This behavior demonstrates the **Stroop Effect** where reading the word \"Red\" written in Blue ink causes cognitive processing delays."}, "correct_key": "A", "correct_keys": ["A"], "explanation": "Correct Answer: - This behavior demonstrates the concept **Loss Aversion** of Kahneman and Tversky's Prospect Theory. - Accordingly, people are afraid of losses that are about 2 to 2.5 times greater than profits of the same size. Therefore, to accept the risk of a potential loss of 10%, investors require a minimum expected return of 25% (equivalent to a ratio of 2.5:1) to feel psychologically satisfied to make the investment.."}];
+
+        let shuffledDeck = [];
+        let currentIdx = 0;
+        let selectedChoice = null;
+        let isAnswered = false;
+        let autoAdvanceTimer = null;
+        
+        // Timer state
+        let timerInterval = null;
+        let TIMER_LIMIT = 15.0;
+        let AUTO_ADVANCE_DELAY = 1.5;
+        let selectedKeys = [];
+        let isMultiSelectQuestion = false;
+        
+        function getMistakesList() {
+            const stored = localStorage.getItem('endless-bf-quiz-mistakes');
+            if (!stored) return [];
+            try { return JSON.parse(stored); } catch (e) { return []; }
+        }
+        function saveMistakesList(list) {
+            localStorage.setItem('endless-bf-quiz-mistakes', JSON.stringify(list));
+            updateMistakesCountUI();
+        }
+        function addMistake(q) {
+            const qId = q.source + "_" + q.number;
+            const list = getMistakesList();
+            if (!list.includes(qId)) {
+                list.push(qId);
+                saveMistakesList(list);
+            }
+        }
+        function removeMistake(q) {
+            const qId = q.source + "_" + q.number;
+            const list = getMistakesList();
+            const index = list.indexOf(qId);
+            if (index !== -1) {
+                list.splice(index, 1);
+                saveMistakesList(list);
+            }
+        }
+        function updateMistakesCountUI() {
+            const list = getMistakesList();
+            const mistakesCountLabel = document.getElementById('mistakes-count-label');
+            if (mistakesCountLabel) {
+                mistakesCountLabel.textContent = list.length + " incorrect question" + (list.length !== 1 ? "s" : "") + " saved";
+            }
+            const mistakesToggle = document.getElementById('mistakes-mode-toggle');
+            const mistakesGroup = document.getElementById('mistakes-count-group');
+            if (mistakesGroup && mistakesToggle) {
+                mistakesGroup.style.display = mistakesToggle.checked ? 'flex' : 'none';
+            }
+        }
+        let timeLeft = TIMER_LIMIT;
+
+        // Statistics state (loaded from LocalStorage or initialized)
+        let stats = {
+            total: 0,
+            correct: 0,
+            streak: 0,
+            maxStreak: 0
+        };
+
+        // Initialize App
+        function initApp() {
+            loadStoredStats();
+            populateSourceFilter();
+            applyFilter();
+            
+            // Load stored settings before filters
+            loadStoredSettings();
+
+            // Event Listeners
+            document.getElementById('filter-source').addEventListener('change', applyFilter);
+            
+            const timerModeToggle = document.getElementById('timer-mode-toggle');
+            const timerDurationGroup = document.getElementById('timer-duration-group');
+            const timerDurationInput = document.getElementById('timer-duration-input');
+            
+            const updateTimerVisibility = () => {
+                timerDurationGroup.style.display = timerModeToggle.checked ? 'flex' : 'none';
+            };
+            timerModeToggle.addEventListener('change', () => {
+                updateTimerVisibility();
+                loadQuestion();
+            });
+            
+            timerDurationInput.addEventListener('change', () => {
+                let val = parseFloat(timerDurationInput.value);
+                if (isNaN(val) || val < 3) val = 3;
+                if (val > 120) val = 120;
+                timerDurationInput.value = val;
+                TIMER_LIMIT = val;
+                localStorage.setItem('endless-bf-quiz-timer-limit', val);
+                loadQuestion();
+            });
+            
+            const autoAdvanceToggle = document.getElementById('auto-advance-toggle');
+            const autoAdvanceDelayGroup = document.getElementById('auto-advance-delay-group');
+            const autoAdvanceDelayInput = document.getElementById('auto-advance-delay-input');
+            
+            const updateAdvanceVisibility = () => {
+                autoAdvanceDelayGroup.style.display = autoAdvanceToggle.checked ? 'flex' : 'none';
+            };
+            autoAdvanceToggle.addEventListener('change', () => {
+                updateAdvanceVisibility();
+            });
+            
+            autoAdvanceDelayInput.addEventListener('change', () => {
+                let val = parseFloat(autoAdvanceDelayInput.value);
+                if (isNaN(val) || val < 0.5) val = 0.5;
+                if (val > 10) val = 10;
+                autoAdvanceDelayInput.value = val;
+                AUTO_ADVANCE_DELAY = val;
+                localStorage.setItem('endless-bf-quiz-advance-delay', val);
+            });
+            
+            // Mistakes Mode Listeners
+            const mistakesModeToggle = document.getElementById('mistakes-mode-toggle');
+            mistakesModeToggle.addEventListener('change', () => {
+                updateMistakesCountUI();
+                applyFilter();
+            });
+            
+            const clearMistakesBtn = document.getElementById('clear-mistakes-button');
+            clearMistakesBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear your saved mistakes?')) {
+                    saveMistakesList([]);
+                    if (mistakesModeToggle.checked) {
+                        applyFilter();
+                    }
+                }
+            });
+            
+            // Apply initial visibility states
+            updateTimerVisibility();
+            updateAdvanceVisibility();
+            updateMistakesCountUI();
+            
+            document.getElementById('next-button').addEventListener('click', () => {
+                if (isMultiSelectQuestion && !isAnswered) {
+                    submitMultiChoice(selectedKeys);
+                } else {
+                    advanceQuestion();
+                }
+            });
+            
+            // Keyboard Listener
+            window.addEventListener('keydown', handleKeydown);
+            
+            updateStatsUI();
+        }
+
+        function loadStoredStats() {
+            const stored = localStorage.getItem('endless-bf-quiz-stats');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    stats.total = parsed.total || 0;
+                    stats.correct = parsed.correct || 0;
+                    stats.streak = parsed.streak || 0;
+                    stats.maxStreak = parsed.maxStreak || 0;
+                } catch (e) {
+                    console.error('Error loading stored stats:', e);
+                }
+            }
+        }
+
+        function loadStoredSettings() {
+            const storedTimer = localStorage.getItem('endless-bf-quiz-timer-limit');
+            if (storedTimer) {
+                TIMER_LIMIT = parseFloat(storedTimer);
+                document.getElementById('timer-duration-input').value = TIMER_LIMIT;
+            }
+            const storedDelay = localStorage.getItem('endless-bf-quiz-advance-delay');
+            if (storedDelay) {
+                AUTO_ADVANCE_DELAY = parseFloat(storedDelay);
+                document.getElementById('auto-advance-delay-input').value = AUTO_ADVANCE_DELAY;
+            }
+        }
+
+        function renderMath(element) {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(element, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false},
+                        {left: "\\(", right: "\\)", display: false},
+                        {left: "\\['", right: "\\]", display: true}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function saveStats() {
+            localStorage.setItem('endless-bf-quiz-stats', JSON.stringify(stats));
+        }
+
+        function resetStats() {
+            if (confirm('Are you sure you want to reset all cumulative statistics?')) {
+                stats = {
+                    total: 0,
+                    correct: 0,
+                    streak: 0,
+                    maxStreak: 0
+                };
+                saveStats();
+                updateStatsUI();
+            }
+        }
+
+        function populateSourceFilter() {
+            const sources = new Set(questionsPool.map(q => q.source));
+            const filterSelect = document.getElementById('filter-source');
+            
+            // Clear existing except first
+            filterSelect.innerHTML = '<option value="ALL">All Sources</option>';
+            
+            // Sort sources alphabetically
+            Array.from(sources).sort().forEach(src => {
+                const option = document.createElement('option');
+                option.value = src;
+                option.textContent = src;
+                filterSelect.appendChild(option);
+            });
+        }
+
+        function applyFilter() {
+            const selectedSource = document.getElementById('filter-source').value;
+            const mistakesOnly = document.getElementById('mistakes-mode-toggle').checked;
+            
+            let basePool = [...questionsPool];
+            
+            if (mistakesOnly) {
+                const mistakes = getMistakesList();
+                basePool = questionsPool.filter(q => {
+                    const qId = q.source + "_" + q.number;
+                    return mistakes.includes(qId);
+                });
+            }
+            
+            if (selectedSource === 'ALL') {
+                filteredPool = basePool;
+            } else {
+                filteredPool = basePool.filter(q => q.source === selectedSource);
+            }
+            
+            reshuffleDeck();
+        }
+
+        function reshuffleDeck() {
+            shuffledDeck = [...filteredPool];
+            // Shuffle using Fisher-Yates algorithm
+            for (let i = shuffledDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledDeck[i], shuffledDeck[j]] = [shuffledDeck[j], shuffledDeck[i]];
+            }
+            
+            currentIdx = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (shuffledDeck.length === 0) {
+                document.getElementById('q-prompt').textContent = 'No questions available in this category.';
+                document.getElementById('choices-container').innerHTML = '';
+                return;
+            }
+            
+            // Cancel any pending timers and intervals
+            stopTimers();
+
+            isAnswered = false;
+            selectedChoice = null;
+            
+            const q = shuffledDeck[currentIdx];
+            
+            // Render basic metadata
+            document.getElementById('q-source').textContent = q.source;
+            document.getElementById('q-index').textContent = `Q ${currentIdx + 1} / ${shuffledDeck.length}`;
+            
+            // Render prompt
+            document.getElementById('q-prompt').innerHTML = escapeHtml(q.prompt).replace(/\n/g, '<br>');
+            
+            // Render choices
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+            
+            Object.entries(q.choices).forEach(([key, text]) => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'choice-button';
+                btn.id = `choice-${key}`;
+                btn.innerHTML = `<span class="choice-letter" id="letter-${key}">${key}</span><span style="flex-grow:1;">${escapeHtml(text)}</span>`;
+                btn.addEventListener('click', () => submitChoice(key));
+                choicesContainer.appendChild(btn);
+            });
+            
+            // Hide feedback panel
+            document.getElementById('feedback-container').style.display = 'none';
+            document.getElementById('next-button').disabled = true;
+            
+            // Render LaTeX Math in prompt and choices
+            renderMath(document.getElementById('q-prompt'));
+            renderMath(choicesContainer);
+            
+            // Handle Blitz Mode Timer setup
+            const timerContainer = document.getElementById('timer-container');
+            const timerBar = document.getElementById('timer-bar');
+            const isTimerActive = document.getElementById('timer-mode-toggle').checked;
+            
+            if (isTimerActive) {
+                timerContainer.style.display = 'block';
+                timeLeft = TIMER_LIMIT;
+                timerBar.style.width = '100%';
+                
+                // Tick every 100ms for smooth progress bar updates
+                timerInterval = setInterval(() => {
+                    timeLeft -= 0.1;
+                    const percent = Math.max(0, (timeLeft / TIMER_LIMIT) * 100);
+                    timerBar.style.width = `${percent}%`;
+                    
+                    if (timeLeft <= 0) {
+                        stopTimers();
+                        handleTimeout();
+                    }
+                }, 100);
+            } else {
+                timerContainer.style.display = 'none';
+            }
+            
+            updateProgressBar();
+        }
+
+        function stopTimers() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            if (autoAdvanceTimer) {
+                clearTimeout(autoAdvanceTimer);
+                autoAdvanceTimer = null;
+            }
+        }
+
+        function submitChoice(key) {
+            if (isAnswered) return;
+            isAnswered = true;
+            selectedChoice = key;
+            
+            stopTimers(); // Freeze timer instantly
+            
+            const q = shuffledDeck[currentIdx];
+            const correctKey = q.correct_key.toUpperCase();
+            
+            const isCorrect = (key.toUpperCase() === correctKey);
+            
+            // Update stats
+            stats.total += 1;
+            if (isCorrect) {
+                stats.correct += 1;
+                stats.streak += 1;
+                if (stats.streak > stats.maxStreak) {
+                    stats.maxStreak = stats.streak;
+                }
+                removeMistake(q);
+            } else {
+                stats.streak = 0;
+                addMistake(q);
+            }
+            
+            saveStats();
+            updateStatsUI();
+            
+            // Highlight options
+            Object.keys(q.choices).forEach(choiceKey => {
+                const btn = document.getElementById(`choice-${choiceKey}`);
+                btn.classList.add('disabled');
+                if (choiceKey.toUpperCase() === correctKey) {
+                    btn.classList.add('correct');
+                } else if (choiceKey.toUpperCase() === key.toUpperCase() && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            
+            // Render feedback panel
+            renderFeedbackPanel(isCorrect, key, correctKey, q);
+        }
+
+        function handleTimeout() {
+            if (isAnswered) return;
+            isAnswered = true;
+            
+            const q = shuffledDeck[currentIdx];
+            const correctKey = q.correct_key.toUpperCase();
+            
+            // Set statistics (time out counts as incorrect)
+            stats.total += 1;
+            stats.streak = 0;
+            
+            saveStats();
+            updateStatsUI();
+            addMistake(q);
+            
+            // Disable choices and highlight correct answer
+            Object.keys(q.choices).forEach(choiceKey => {
+                const btn = document.getElementById(`choice-${choiceKey}`);
+                btn.classList.add('disabled');
+                if (choiceKey.toUpperCase() === correctKey) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            // Render feedback panel for timeout
+            const feedbackContainer = document.getElementById('feedback-container');
+            const feedbackBanner = document.getElementById('feedback-banner');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackText = document.getElementById('feedback-text');
+            
+            feedbackContainer.style.display = 'block';
+            feedbackBanner.className = 'feedback-banner incorrect';
+            feedbackIcon.textContent = '⏱';
+            feedbackText.textContent = `Time's Up! The correct answer is ${correctKey}.`;
+            
+            // Explanation
+            const explText = document.getElementById('explanation-text');
+            const explTitle = document.getElementById('explanation-container');
+            if (q.explanation && q.explanation.trim() !== '') {
+                explTitle.style.display = 'block';
+                explText.textContent = q.explanation;
+                // Render LaTeX Math in explanation
+                renderMath(explText);
+            } else {
+                explTitle.style.display = 'none';
+            }
+            
+            document.getElementById('next-button').disabled = false;
+            
+            // Handle auto-advance
+            triggerAutoAdvance();
+        }
+
+        function renderFeedbackPanel(isCorrect, key, correctKey, q) {
+            const feedbackContainer = document.getElementById('feedback-container');
+            const feedbackBanner = document.getElementById('feedback-banner');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackText = document.getElementById('feedback-text');
+            
+            feedbackContainer.style.display = 'block';
+            
+            if (isCorrect) {
+                feedbackBanner.className = 'feedback-banner correct';
+                feedbackIcon.textContent = '✓';
+                feedbackText.textContent = 'Correct Answer!';
+            } else {
+                feedbackBanner.className = 'feedback-banner incorrect';
+                feedbackIcon.textContent = '✗';
+                feedbackText.textContent = `Incorrect. You chose ${key.toUpperCase()}, correct is ${correctKey}.`;
+            }
+            
+            // Explanation
+            const explText = document.getElementById('explanation-text');
+            const explTitle = document.getElementById('explanation-container');
+            if (q.explanation && q.explanation.trim() !== '') {
+                explTitle.style.display = 'block';
+                explText.textContent = q.explanation;
+                // Render LaTeX Math in explanation
+                renderMath(explText);
+            } else {
+                explTitle.style.display = 'none';
+            }
+            
+            document.getElementById('next-button').disabled = false;
+            
+            triggerAutoAdvance();
+        }
+
+        function triggerAutoAdvance() {
+            const isAutoAdvance = document.getElementById('auto-advance-toggle').checked;
+            if (isAutoAdvance) {
+                autoAdvanceTimer = setTimeout(() => {
+                    advanceQuestion();
+                }, AUTO_ADVANCE_DELAY * 1000);
+            }
+        }
+
+        function advanceQuestion() {
+            if (shuffledDeck.length === 0) return;
+            
+            currentIdx += 1;
+            if (currentIdx >= shuffledDeck.length) {
+                // Endless loop: reshuffle and start over!
+                alert('Congratulations! You completed all questions in this set. Shuffling again to continue.');
+                reshuffleDeck();
+            } else {
+                loadQuestion();
+            }
+        }
+
+        function submitMultiChoice(selectedKeys) {
+            if (isAnswered) return;
+            isAnswered = true;
+            
+            stopTimers();
+            
+            const q = shuffledDeck[currentIdx];
+            const correctKeys = q.correct_keys.map(k => k.toUpperCase());
+            const upperSelected = selectedKeys.map(k => k.toUpperCase());
+            
+            const isCorrect = (
+                upperSelected.length === correctKeys.length &&
+                upperSelected.every(k => correctKeys.includes(k))
+            );
+            
+            stats.total += 1;
+            if (isCorrect) {
+                stats.correct += 1;
+                stats.streak += 1;
+                if (stats.streak > stats.maxStreak) {
+                    stats.maxStreak = stats.streak;
+                }
+                removeMistake(q);
+            } else {
+                stats.streak = 0;
+                addMistake(q);
+            }
+            
+            saveStats();
+            updateStatsUI();
+            
+            Object.keys(q.choices).forEach(choiceKey => {
+                const btn = document.getElementById(`choice-${choiceKey}`);
+                btn.classList.remove('selected');
+                btn.classList.add('disabled');
+                
+                const isKeyCorrect = correctKeys.includes(choiceKey.toUpperCase());
+                const isKeySelected = upperSelected.includes(choiceKey.toUpperCase());
+                
+                const letterSpan = document.getElementById(`letter-${choiceKey}`);
+                if (isKeyCorrect) {
+                    btn.classList.add('correct');
+                    letterSpan.innerHTML = '✔';
+                } else if (isKeySelected) {
+                    btn.classList.add('incorrect');
+                    letterSpan.innerHTML = '✘';
+                }
+            });
+            
+            const selectedStr = upperSelected.join(', ');
+            const correctStr = correctKeys.join(', ');
+            renderFeedbackPanel(isCorrect, selectedStr, correctStr, q);
+            
+            document.getElementById('next-button').textContent = 'Next Question';
+        }
+
+        function handleKeydown(event) {
+            if (isEditableTarget(event.target)) return;
+            
+            const key = event.key.toUpperCase();
+            
+            const choiceKeys = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            const numberKeys = ['1', '2', '3', '4', '5', '6', '7', '8'];
+            
+            if (!isAnswered) {
+                if (choiceKeys.includes(key)) {
+                    event.preventDefault();
+                    if (isMultiSelectQuestion) {
+                        const btn = document.getElementById(`choice-${key}`);
+                        if (btn) btn.click();
+                    } else {
+                        submitChoice(key);
+                    }
+                } else if (numberKeys.includes(key)) {
+                    event.preventDefault();
+                    const letter = choiceKeys[numberKeys.indexOf(key)];
+                    if (isMultiSelectQuestion) {
+                        const btn = document.getElementById(`choice-${letter}`);
+                        if (btn) btn.click();
+                    } else {
+                        submitChoice(letter);
+                    }
+                } else if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const nextBtn = document.getElementById('next-button');
+                    if (!nextBtn.disabled) {
+                        nextBtn.click();
+                    }
+                }
+            } else {
+                if (event.key === ' ' || event.key === 'Enter') {
+                    event.preventDefault();
+                    advanceQuestion();
+                }
+            }
+        }
+
+        function isEditableTarget(target) {
+            if (!target) return false;
+            const tagName = target.tagName.toLowerCase();
+            return tagName === 'input' || tagName === 'textarea' || tagName === 'select' || target.isContentEditable;
+        }
+
+        function updateStatsUI() {
+            document.getElementById('current-streak').textContent = stats.streak;
+            document.getElementById('stats-total').textContent = stats.total;
+            document.getElementById('stats-correct').textContent = stats.correct;
+            
+            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+            document.getElementById('stats-accuracy').textContent = `${accuracy}%`;
+            document.getElementById('stats-max-streak').textContent = stats.maxStreak;
+            
+            // Streak pulse glow effect if streak is active
+            const streakBadge = document.getElementById('streak-container');
+            if (stats.streak > 0) {
+                streakBadge.style.display = 'flex';
+            } else {
+                streakBadge.style.display = 'none';
+            }
+        }
+
+        function updateProgressBar() {
+            if (shuffledDeck.length === 0) return;
+            const percent = (currentIdx / shuffledDeck.length) * 100;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        // Helper to format HTML safety
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        // Run Init
+        window.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
