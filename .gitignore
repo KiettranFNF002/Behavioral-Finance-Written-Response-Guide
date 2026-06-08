@@ -1,6 +1,7 @@
 # Ignore everything
 *
 
-# Except HTML files and .gitignore
+# Except HTML files, .gitignore, and README.md
 !*.html
 !.gitignore
+!README.md
