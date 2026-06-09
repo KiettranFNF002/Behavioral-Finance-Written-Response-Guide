@@ -645,6 +645,10 @@
             practiceMode = isPractice;
             localStorage.setItem('bf-written-practice-mode', isPractice);
             
+            if (isPractice) {
+                revealedSolutions.clear(); // Hides answers to restart practice
+            }
+            
             const btnStudy = document.getElementById('btn-study');
             const btnPractice = document.getElementById('btn-practice');
             if (isPractice) {
@@ -662,6 +666,11 @@
 
         function revealSolution(lang) {
             revealedSolutions.add(lang);
+            renderQuestionContent();
+        }
+
+        function hideSolution(lang) {
+            revealedSolutions.delete(lang);
             renderQuestionContent();
         }
 
@@ -815,7 +824,13 @@
                 sBox.classList.add('is-hidden');
             }
             
-            sBox.innerHTML = `<div class="section-label">${labelText}</div><div class="solution-text">${renderMarkdownAndMath(markdownContent)}</div>`;
+            let hideBtnHtml = '';
+            if (practiceMode && !isHidden) {
+                const hideText = lang === 'en' ? '🙈 Hide' : '🙈 Ẩn';
+                hideBtnHtml = `<button class="hide-card-btn" onclick="hideSolution('${lang}')" style="margin-left: auto; background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; transition: var(--transition);" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-secondary)'">${hideText}</button>`;
+            }
+            
+            sBox.innerHTML = `<div class="section-label" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">${labelText}${hideBtnHtml}</div><div class="solution-text">${renderMarkdownAndMath(markdownContent)}</div>`;
             
             if (isHidden) {
                 const overlay = document.createElement('div');
